@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    
+    <title>Hyperium - Seu Mercado de Jogos</title>
+    <link rel="icon" type="image/png" href="assets/images/icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Inputs escondidos para upload de arquivos -->
+    <input type="file" id="profile-pic-uploader" class="hidden" accept="image/*">
+    <input type="file" id="banner-uploader" class="hidden" accept="image/*">
+
+    <header class="main-header">
+        <div class="header-left">
+            <button class="hamburger-menu" aria-label="Abrir menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <a href="#" class="logo-container go-home-link">
+                <picture>
+                    <source srcset="assets/images/logo-dark.png" media="(prefers-color-scheme: dark)">
+                    <img src="assets/images/logo-light.png" alt="Hyperium Logo">
+                </picture>
+            </a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" class="go-home-link">Início</a></li>
+                    <li class="dropdown">
+                        <a href="loja.html" class="dropbtn">Loja <i class="fa-solid fa-chevron-down fa-xs"></i></a>
+                        <div class="dropdown-menu-level1">
+                            <div class="sub-dropdown">
+                                <a href="#"><i class="fa-solid fa-gamepad"></i> Plataformas <i class="fa-solid fa-chevron-right fa-xs"></i></a>
+                                <div class="dropdown-menu-level2">
+                                    <a href="#">PC</a><a href="#">Console</a><a href="#">Mobile</a>
+                                </div>
+                            </div>
+                            <div class="sub-dropdown">
+                                <a href="#"><i class="fa-solid fa-tags"></i> Categorias <i class="fa-solid fa-chevron-right fa-xs"></i></a>
+                                <div class="dropdown-menu-level2">
+                                    <a href="#">Ação</a><a href="#">Aventura</a><a href="#">RPG</a>
+                                </div>
+                            </div>
+                            <div class="sub-dropdown">
+                                <a href="#"><i class="fa-solid fa-fire"></i> Ofertas <i class="fa-solid fa-chevron-right fa-xs"></i></a>
+                                <div class="dropdown-menu-level2">
+                                    <a href="#">Promoções</a><a href="#">Grátis</a><a href="#">Abaixo de R$20</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li><a href="#">Lançamentos</a></li>
+                    <li><a href="vender.html">Vender</a></li>
+                    <li><a href="suporte.html">Suporte</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="header-right">
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" placeholder="Buscar jogos...">
+            </div>
+            <div class="header-actions">
+                <button class="action-btn" aria-label="Pesquisar"><i class="fa-solid fa-search"></i></button>
+                <button class="action-btn" aria-label="Notificações"><i class="fa-solid fa-bell"></i></button>
+                <button class="action-btn" aria-label="Carrinho de compras"><i class="fa-solid fa-cart-shopping"></i></button>
+            </div>
+            
+            <a href="login.html" class="auth-btn">Login</a>
+
+            <div class="profile-dropdown hidden">
+                <a href="#" class="user-profile-desktop view-profile-link">
+                    <span id="desktop-username"></span>
+                    <div class="profile-pic">
+                        <img src="assets/images/profile.png" alt="Foto de Perfil">
+                    </div>
+                </a>
+                <div class="profile-dropdown-menu">
+                    <a href="#" class="logout-link">Sair</a>
+                </div>
+            </div>
+            
+            <a href="login.html" class="mobile-auth-icon" aria-label="Login">
+                <i class="fa-solid fa-user"></i>
+            </a>
+            <a href="#" class="user-profile-header-mobile view-profile-link hidden">
+                <div class="profile-pic">
+                    <img src="assets/images/profile.png" alt="Foto de Perfil">
+                </div>
+            </a>
+        </div>
+    </header>
+
+<!-- index.html -->
+
+<div class="mobile-nav-overlay"></div>
+<nav class="mobile-nav-sidebar">
+    <div class="mobile-nav-header">
+        <a href="#" class="go-home-link">
+            <picture>
+                <source srcset="assets/images/logo-mobile-dark.png" media="(prefers-color-scheme: dark)">
+                <img src="assets/images/logo-mobile-light.png" alt="Hyperium Logo">
+            </picture>
+        </a>
+        <a href="login.html" class="mobile-nav-login">Login</a>
+        <div class="sidebar-user-profile view-profile-link hidden">
+            <span id="sidebar-username"></span>
+            <div class="profile-pic">
+                <img src="assets/images/profile.png" alt="Foto de Perfil">
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-nav-links">
+        <ul>
+            <li><a href="#" class="nav-item-main go-home-link"><span>Página Inicial</span><i class="fa-solid fa-house"></i></a></li>
+            <li><span class="sidebar-static-title">Loja</span></li>
+            <li class="accordion-item">
+                <a href="#" class="accordion-toggle"><span>Plataformas</span><i class="fa-solid fa-chevron-down accordion-icon"></i></a>
+                <div class="accordion-content">
+                    <ul><li><a href="#">PC</a></li><li><a href="#">Console</a></li><li><a href="#">Mobile</a></li></ul>
+                </div>
+            </li>
+            <li class="accordion-item">
+                <a href="#" class="accordion-toggle"><span>Categorias</span><i class="fa-solid fa-chevron-down accordion-icon"></i></a>
+                <div class="accordion-content">
+                    <ul><li><a href="#">Ação</a></li><li><a href="#">Aventura</a></li><li><a href="#">RPG</a></li></ul>
+                </div>
+            </li>
+            <li class="accordion-item">
+                <a href="#" class="accordion-toggle"><span>Ofertas</span><i class="fa-solid fa-chevron-down accordion-icon"></i></a>
+                <div class="accordion-content">
+                    <ul><li><a href="#">Promoções</a></li><li><a href="#">Grátis</a></li></ul>
+                </div>
+            </li>
+            <li><a href="#" class="nav-item-main"><span>Lançamentos</span></a></li>
+            <li><a href="vender.html" class="nav-item-main"><span>Vender</span></a></li>
+            <li><a href="suporte.html" class="nav-item-main"><span>Suporte</span></a></li>
+
+            <!-- BOTÃO SAIR MOVIDO PARA CÁ -->
+            <li id="mobile-logout-li" class="hidden">
+                <a href="#" class="nav-item-main logout-link">
+                    <span>Sair</span>
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- O ANTIGO RODAPÉ FOI REMOVIDO POIS NÃO É MAIS NECESSÁRIO -->
+</nav>
+
+    <main class="main-content">
+        <h1>Bem-vindo ao <span class="highlight-text">Hyperium</span></h1>
+        <p>O seu mercado de jogos confiável, feito por e para gamers.</p>
+    </main>
+
+    <div id="profile-view" class="profile-view-container hidden">
+        <div id="profile-banner-div" class="profile-banner">
+            <div id="edit-banner-overlay" class="image-edit-overlay hidden">
+                <i class="fa-solid fa-camera"></i>
+                <span>Alterar Banner</span>
+            </div>
+            <a href="#" id="back-to-home-btn" class="back-button" aria-label="Voltar para a página inicial">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+        </div>
+
+        <div class="profile-main-content">
+            <div id="profile-header-panel" class="profile-header-panel">
+                <a href="#" id="edit-profile-btn" class="edit-profile-button hidden" aria-label="Editar perfil">
+                    <i class="fa-solid fa-pencil"></i>
+                </a>
+                
+                <div class="profile-header-top">
+                    <div class="profile-pic-large">
+                        <div id="edit-pic-overlay" class="image-edit-overlay hidden">
+                            <i class="fa-solid fa-camera"></i>
+                        </div>
+                        <img id="profile-view-pic" src="assets/images/profile.png" alt="Foto de Perfil">
+                    </div>
+                    
+                    <div class="profile-user-details">
+                        <h1 id="profile-view-username">Nome de Usuário</h1>
+                        <input type="text" id="edit-username-input" placeholder="Seu nome de usuário">
+                    </div>
+                </div>
+
+                <p id="profile-view-bio">Esta é a minha bio. Fale um pouco sobre você!</p>
+                <textarea id="edit-bio-textarea" placeholder="Fale um pouco sobre você..." rows="3"></textarea>
+                
+                <div id="edit-actions-container" class="edit-actions">
+                    <button id="cancel-edit-btn" class="edit-action-btn cancel">Cancelar</button>
+                    <button id="save-edit-btn" class="edit-action-btn save">Salvar</button>
+                </div>
+            </div>
+
+            <a href="#" id="create-product-btn" class="create-product-button hidden" aria-label="Adicionar novo produto">
+                <i class="fa-solid fa-plus"></i>
+            </a>
+            
+            <div class="profile-products-section">
+                <h2>Meus Produtos</h2>
+                <div class="profile-products-grid">
+                    <!-- A grade está vazia, pronta para ser preenchida -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-main">
+            <div class="footer-column about">
+                <picture>
+                    <source srcset="assets/images/logo-dark.png" media="(prefers-color-scheme: dark)">
+                    <img src="assets/images/logo-light.png" alt="Hyperium Logo" class="footer-logo">
+                </picture>
+                <p>Hyperium é a sua dimensão definitiva para jogos digitais, oferecendo uma vasta biblioteca de títulos. Mergulhe em novas aventuras conosco!</p>
+            </div>
+            <div class="footer-column links">
+                <h4>Navegação Rápida</h4>
+                <ul>
+                    <li><a href="#" class="go-home-link">Início</a></li>
+                    <li><a href="loja.html">Loja</a></li>
+                    <li><a href="#">Lançamentos</a></li>
+                    <li><a href="vender.html">Vender seu Jogo</a></li>
+                    <li><a href="suporte.html">Suporte</a></li>
+                </ul>
+            </div>
+            <div class="footer-column links">
+                <h4>Ajuda & Suporte</h4>
+                <ul>
+                    <li><a href="#">Perguntas Frequentes (FAQ)</a></li>
+                    <li><a href="#">Entre em Contato</a></li>
+                    <li><a href="#">Política de Reembolso</a></li>
+                    <li><a href="#">Termos de Serviço</a></li>
+                    <li><a href="#">Política de Privacidade</a></li>
+                </ul>
+            </div>
+            <div class="footer-column newsletter">
+                <h4>Fique por Dentro</h4>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Seu e-mail" required>
+                    <button type="submit" aria-label="Inscrever-se"><i class="fa-solid fa-arrow-right"></i></button>
+                </form>
+            </div>
+            <div class="footer-column social">
+                <h4>Siga-nos</h4>
+                <div class="social-links">
+                    <a href="#" aria-label="Discord" title="Discord"><i class="fa-brands fa-discord"></i></a>
+                    <a href="#" aria-label="Twitter" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" aria-label="Twitch" title="Twitch"><i class="fa-brands fa-twitch"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© <span id="copyright-year"></span> Hyperium. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
