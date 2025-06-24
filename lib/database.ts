@@ -1,10 +1,26 @@
-// lib/db.ts
-import { Pool } from "pg";
+import { createClient } from '@supabase/supabase-js'
 
-const connectionString = process.env.CONNECTION_STRING;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-if (!connectionString) throw new Error("Connection string not defined");
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables')
+}
 
-export const pool = new Pool({
-  connectionString,
-});
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+})
+
+// Função para uso no servidor (API routes)
+export const createServerClient = () => {
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  })
+}

@@ -37,6 +37,7 @@ export async function handleLogin(
 export async function handleRegister(
   e: FormEvent, 
   email: string, 
+  username: string,
   password: string, 
   password2: string,
   router: AppRouterInstance
@@ -54,12 +55,12 @@ export async function handleRegister(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, username, password, password2 })
     });
 
     const data = await response.json();
     
-    if (response.ok) {
+    if (data.status == 200 || data.status == 201) {
       toast.success(data.message);
       router.push("/login");
     } else {
@@ -70,3 +71,4 @@ export async function handleRegister(
     toast.error("Erro de conexão");
   }
 }
+

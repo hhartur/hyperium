@@ -1,8 +1,14 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import { handleRegister } from "@/lib/routesHandler"
+import { useState } from "react"
 
 export default function Register(){
+    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [password2, setPassword2] = useState('')
     const router = useRouter()
 
     return(
@@ -20,25 +26,25 @@ export default function Register(){
                     </a>
 
                     {/* PAINEL DE CADASTRO */}
-                    <form id="signup-form" className="active">
+                    <form id="signup-form" className="active" onSubmit={(e)=>handleRegister(e, email, username, password, password2, router)}>
                         <div className="form-header">
                             <h2>Criar Conta</h2>
                             <p>É rápido e fácil!</p>
                         </div>
                         <div className="input-group">
-                            <input type="text" id="signup-name" className="input-field" placeholder=" " required />
+                            <input type="text" id="signup-name" className="input-field" placeholder=" " onChange={(e)=>setUsername(e.target.value)} required />
                             <label htmlFor="signup-name" className="input-label">Nome de Usuário</label>
                         </div>
                         <div className="input-group">
-                            <input type="email" id="signup-email" className="input-field" placeholder=" " required />
+                            <input type="email" id="signup-email" className="input-field" placeholder=" " onChange={(e)=>setEmail(e.target.value)} required />
                             <label htmlFor="signup-email" className="input-label">Email</label>
                         </div>
                         <div className="input-group">
-                            <input type="password" id="signup-password" className="input-field" placeholder=" " required />
+                            <input type="password" id="signup-password" className="input-field" placeholder=" " onChange={(e)=>setPassword(e.target.value)} required />
                             <label htmlFor="signup-password" className="input-label">Senha</label>
                         </div>
                         <div className="input-group">
-                            <input type="password" id="signup-confirm-password" className="input-field" placeholder=" " required />
+                            <input type="password" id="signup-confirm-password" className="input-field" placeholder=" " onChange={(e)=>setPassword2(e.target.value)} required />
                             <label htmlFor="signup-confirm-password" className="input-label">Confirmar Senha</label>
                         </div>
                         <button type="submit" className="submit-btn">Criar Conta</button>
