@@ -11,6 +11,8 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.50.1",
     "bcrypt": "^6.0.0",
+    "cookie": "^1.0.2",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.3.4",
     "pg": "^8.16.2",
     "postgres": "^3.4.7",

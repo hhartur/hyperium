@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext"; // 1. IMPORTE O HOOK useCart
 
 export default function Header() {
-  const router = useRouter()
+  const router = useRouter();
+  const { cartCount } = useCart(); // 2. ACESSE O NÚMERO DE ITENS DO CARRINHO
 
   return (
     <>
-        <header className="main-header">
-          <div className="header-left">
+      <header className="main-header">
+        {/* ... (código do header-left) ... */}
+        <div className="header-left">
             <button className="hamburger-menu" aria-label="Abrir menu">
               <i className="fa-solid fa-bars"></i>
             </button>
@@ -88,31 +90,34 @@ export default function Header() {
                 </li>
               </ul>
             </nav>
+        </div>
+
+        <div className="header-right">
+          <div className="search-container">
+            <i className="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" placeholder="Buscar jogos..." />
           </div>
 
-          <div className="header-right">
-            <div className="search-container">
-              <i className="fa-solid fa-magnifying-glass search-icon"></i>
-              <input type="text" placeholder="Buscar jogos..." />
-            </div>
-
-            <div className="header-actions">
-              <button className="action-btn" aria-label="Pesquisar">
-                <i className="fa-solid fa-search"></i>
-              </button>
-              <button className="action-btn" aria-label="Notificações">
-                <i className="fa-solid fa-bell"></i>
-              </button>
-              <button className="action-btn" aria-label="Carrinho de compras">
-                <i className="fa-solid fa-cart-shopping"></i>
-              </button>
-            </div>
-
-            <a onClick={()=>router.push("/login")} className="auth-btn">
-              Login
+          <div className="header-actions">
+            <button className="action-btn" aria-label="Pesquisar">
+              <i className="fa-solid fa-search"></i>
+            </button>
+            <button className="action-btn" aria-label="Notificações">
+              <i className="fa-solid fa-fa-bell"></i>
+            </button>
+            {/* 3. ATUALIZE O BOTÃO DO CARRINHO */}
+            <a onClick={() => router.push('/cart')} className="action-btn cart-btn" aria-label="Carrinho de compras">
+              <i className="fa-solid fa-cart-shopping"></i>
+              {cartCount > 0 && <span className="cart-count-badge">{cartCount}</span>}
             </a>
+          </div>
 
-            <div className="profile-dropdown hidden">
+          <a onClick={() => router.push("/login")} className="auth-btn">
+            Login
+          </a>
+
+          {/* ... (resto do código do header-right) ... */}
+          <div className="profile-dropdown hidden">
               <a href="" className="user-profile-desktop view-profile-link">
                 <span id="desktop-username"></span>
                 <div className="profile-pic">
@@ -138,8 +143,8 @@ export default function Header() {
                 <img src="/profile.png" alt="Foto de Perfil" />
               </div>
             </a>
-          </div>
-        </header>
+        </div>
+      </header>
     </>
   );
 }

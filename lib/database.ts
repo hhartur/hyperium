@@ -15,7 +15,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 })
 
-// Função para uso no servidor (API routes)
 export const createServerClient = () => {
   return createClient(supabaseUrl, supabaseAnonKey, {
     auth: {

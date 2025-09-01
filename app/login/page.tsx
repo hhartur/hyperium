@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { handleLogin } from "@/lib/routesHandler"
 
 export default function Login() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [isLoading, setIsLoading] = useState(false) // Add loading state
+    const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -79,17 +79,7 @@ export default function Login() {
                 </div>
             </main>
 
-            <footer className="login-page-footer">
-                <picture>
-                    <source srcSet="/logo-dark.png" media="(prefers-color-scheme: dark)" />
-                    <img src="/logo-light.png" alt="Hyperium Logo" />
-                </picture>
-                <ul>
-                    <li><a href="#">Ajuda</a></li>
-                    <li><a href="#">Termos de uso</a></li>
-                    <li><a href="#">Política de privacidade</a></li>
-                </ul>
-            </footer>
+            
         </>
     )
 }

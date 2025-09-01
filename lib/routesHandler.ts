@@ -1,4 +1,3 @@
-// lib/routeHandlers.ts
 import { FormEvent } from "react";
 import { toast } from "react-toastify";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
@@ -24,6 +23,7 @@ export async function handleLogin(
     
     if (data.status == 200) {
       toast.success(data.message);
+      localStorage.setItem("token", data.token)
       router.push("/");
     } else {
       toast.error(data.message || "Erro no login");
@@ -72,3 +72,21 @@ export async function handleRegister(
   }
 }
 
+export async function GetGames() {
+  try {
+    const response = await fetch("/api/get-games", {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.err || "Failed to fetch games");
+    }
+
+    const data = await response.json();
+    return data.games; 
+  } catch (err) {
+    console.error("Error fetching games:", err);
+    return null; 
+  }
+}

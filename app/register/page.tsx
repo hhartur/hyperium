@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { handleRegister } from "@/lib/routesHandler"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function Register(){
     const [email, setEmail] = useState('')
