@@ -8,8 +8,13 @@ import {
   useRef,
   ReactNode,
 } from "react";
-import { Game } from "@/lib/database";
 import { toast } from "react-toastify";
+
+export type Game = {
+  title: string,
+  id: string,
+  price: number,
+}
 
 // Item no carrinho
 export interface CartItem extends Game {
