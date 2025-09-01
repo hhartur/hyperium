@@ -10,11 +10,7 @@ import {
 } from "react";
 import { toast } from "react-toastify";
 
-export type Game = {
-  title: string,
-  id: string,
-  price: number,
-}
+import { Game } from "@/app/Type";
 
 // Item no carrinho
 export interface CartItem extends Game {
@@ -23,7 +19,7 @@ export interface CartItem extends Game {
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (game: Game) => void;
+  addToCart: (game: Game | undefined) => void;
   removeFromCart: (gameId: string) => void;
   updateQuantity: (gameId: string, quantity: number) => void;
   cartCount: number;
@@ -69,7 +65,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [cartItems, isReady]);
 
   // 3. Adicionar ao carrinho
-  const addToCart = (game: Game) => {
+  const addToCart = (game: Game | undefined) => {
+    if(!game) return null;
     const exists = cartItems.find((item) => item.id === game.id);
     if (exists) {
       toast.info(`'${game.title}' já está no seu carrinho!`);

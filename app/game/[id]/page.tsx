@@ -28,7 +28,7 @@ export default function GamePage() {
     fetchGames();
   }, []);
 
-  const game = games.find((g) => g.id === id);
+  const game: Game | undefined = games.find((g) => g.id === id);
 
 if (!game && loading) {
     return (
@@ -52,9 +52,9 @@ if (!game && loading) {
   };
 
   const displayPrice =
-    game.price === 0
+    game?.price === 0
       ? "Grátis"
-      : `R$ ${game.price.toFixed(2).replace(".", ",")}`;
+      : `R$ ${game?.price.toFixed(2).replace(".", ",")}`;
 
   return (
     <main className="main-content" style={{ padding: "4rem 4%" }}>
@@ -68,8 +68,8 @@ if (!game && loading) {
           {/* Coluna da Imagem */}
           <div className="game-image-column">
             <Image
-              src={game.imageUrl}
-              alt={`Capa do jogo ${game.title}`}
+              src={game?.imageUrl || ""}
+              alt={`Capa do jogo ${game?.title}`}
               width={800}
               height={600}
               className="game-details-image"
@@ -78,11 +78,11 @@ if (!game && loading) {
 
           {/* Coluna de Informações e Compra */}
           <div className="game-info-column">
-            <h1>{game.title}</h1>
+            <h1>{game?.title}</h1>
             <p className="game-author">
-              Vendido por <a href="#">{game.author}</a>
+              Vendido por <a href="#">{game?.author}</a>
             </p>
-            <p className="game-description">{game.description}</p>
+            <p className="game-description">{game?.description}</p>
 
             <div className="buy-box">
               <span className="game-price">{displayPrice}</span>
