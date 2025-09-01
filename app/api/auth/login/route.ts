@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { createServerClient } from "@/lib/database";
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt";
 
 const SECRET_KEY = process.env.SECRET_KEY || 'key_super_secreta@';
