@@ -1,19 +1,20 @@
-import type { Metadata } from 'next'
-import './globals.css'
-import { ThemeProvider } from '@/components/providers/theme-provider'
-import { AuthProvider } from '@/components/providers/auth-provider'
-import { Header } from '@/components/layout/header'
-import { Toaster } from 'sonner'
+import type { Metadata } from "next";
+import "./globals.css";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { AuthProvider } from "@/components/providers/auth-provider";
+import { Header } from "@/components/layout/header";
+import { Toaster } from "sonner";
+import { CartProvider } from "@/components/providers/cart-provider";
 
 export const metadata: Metadata = {
-  title: 'Hyperium - Game Store',
-  description: 'The best place to buy and sell indie games',
-}
+  title: "Hyperium - Game Store",
+  description: "The best place to buy and sell indie games",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -25,14 +26,16 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <div className="min-h-screen bg-background">
-              <Header />
-              <main>{children}</main>
-            </div>
-            <Toaster />
+            <CartProvider>
+              <div className="min-h-screen bg-background">
+                <Header />
+                <main>{children}</main>
+              </div>
+              <Toaster />
+            </CartProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
