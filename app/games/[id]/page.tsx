@@ -2,7 +2,7 @@ import { GameDetails } from '@/components/games/game-details'
 import { GameReviews } from '@/components/games/game-reviews'
 import { GameComments } from '@/components/games/game-comments'
 import prisma from '@/lib/prisma'
-import { notFound } from 'next/navigation'
+import { notFound, useParams } from 'next/navigation'
 
 async function getGame(id: string) {
   const game = await prisma.game.findUnique({
@@ -31,8 +31,9 @@ async function getGame(id: string) {
   };
 }
 
-export default async function GamePage({ params }:  { params: { id: string } }) {
-  const game = await getGame(params.id)
+export default async function GamePage() {
+  const params = useParams();
+  const game = await getGame(params.id as string)
 
   if (!game) {
     notFound()
