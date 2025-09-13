@@ -14,6 +14,7 @@ import {
 import { ShoppingCart, Star, Download, Flag, Play } from "lucide-react";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import prisma from "@/lib/prisma";
+import Image from 'next/image'
 
 interface Game {
   id: string;
@@ -69,8 +70,6 @@ export function GameDetails({ game }: GameDetailsProps) {
   const purchaseGame = async () => {
     if (!user) return;
 
-    const price = game.discount_price || game.price;
-
     try {
       await fetch("/api/cart", {
         method: "POST",
@@ -116,7 +115,7 @@ export function GameDetails({ game }: GameDetailsProps) {
       <div className="lg:col-span-2 space-y-6">
         {/* Hero Image */}
         <div className="relative aspect-video rounded-lg overflow-hidden">
-          <img
+          <Image
             src={game.image_url || "/placeholder-game.jpg"}
             alt={game.title}
             className="w-full h-full object-cover"
@@ -134,7 +133,7 @@ export function GameDetails({ game }: GameDetailsProps) {
             <h3 className="text-xl font-semibold mb-4">Screenshots</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {game.screenshots.map((screenshot, index) => (
-                <img
+                <Image
                   key={index}
                   src={screenshot}
                   alt={`${game.title} screenshot ${index + 1}`}
@@ -292,7 +291,7 @@ export function GameDetails({ game }: GameDetailsProps) {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
                 {game.seller?.avatar_url ? (
-                  <img
+                  <Image
                     src={game.seller.avatar_url}
                     alt={game.seller.username}
                     className="w-full h-full rounded-full object-cover"

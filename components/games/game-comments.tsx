@@ -1,53 +1,58 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { MessageCircle, Send } from 'lucide-react'
-import { useAuthContext } from '@/components/providers/auth-provider'
-import prisma from '@/lib/prisma'
+import { useCallback, useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { MessageCircle, Send } from "lucide-react";
+import { useAuthContext } from "@/components/providers/auth-provider";
+import prisma from "@/lib/prisma";
+import Image from "next/image";
 
 interface Comment {
-  id: string
-  game_id: string
-  user_id: string
-  content: string
-  created_at: Date
-  user: { username: string; avatar_url?: string | null }
+  id: string;
+  game_id: string;
+  user_id: string;
+  content: string;
+  created_at: Date;
+  user: { username: string; avatar_url?: string | null };
 }
 
 interface GameCommentsProps {
-  gameId: string
+  gameId: string;
 }
 
 export function GameComments({ gameId }: GameCommentsProps) {
-  const [comments, setComments] = useState<Comment[]>([])
-  const [newComment, setNewComment] = useState('')
-  const [loading, setLoading] = useState(true)
-  const { user } = useAuthContext()
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuthContext();
+
+  const fetchComments = useCallback(async () => {
+    try {
+      try {
+        const data = await prisma.comment.findMany({
+          where: { game_id: gameId },
+          include: { user: { select: { username: true, avatar_url: true } } },
+          orderBy: { created_at: "desc" },
+        });
+        setComments(data as Comment[]);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch comments", error);
+        setLoading(false);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [gameId]);
 
   useEffect(() => {
-    fetchComments()
-  }, [gameId])
-
-  const fetchComments = async () => {
-    try {
-      const data = await prisma.comment.findMany({
-        where: { game_id: gameId },
-        include: { user: { select: { username: true, avatar_url: true } } },
-        orderBy: { created_at: 'desc' },
-      })
-      setComments(data as Comment[])
-      setLoading(false)
-    } catch (error) {
-      console.error('Failed to fetch comments', error)
-      setLoading(false)
-    }
-  }
+    fetchComments();
+  }, [fetchComments]);
 
   const submitComment = async () => {
-    if (!user || !newComment.trim()) return
+    if (!user || !newComment.trim()) return;
 
     try {
       await prisma.comment.create({
@@ -56,13 +61,13 @@ export function GameComments({ gameId }: GameCommentsProps) {
           game_id: gameId,
           content: newComment.trim(),
         },
-      })
-      setNewComment('')
-      fetchComments()
+      });
+      setNewComment("");
+      fetchComments();
     } catch (error) {
-      console.error('Failed to submit comment', error)
+      console.error("Failed to submit comment", error);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -77,7 +82,7 @@ export function GameComments({ gameId }: GameCommentsProps) {
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -93,7 +98,9 @@ export function GameComments({ gameId }: GameCommentsProps) {
           <div className="border rounded-lg p-4 bg-muted/50">
             <Input
               value={newComment}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewComment(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setNewComment(e.target.value)
+              }
               placeholder="Share your thoughts about this game..."
               className="resize-none mb-3"
             />
@@ -114,7 +121,7 @@ export function GameComments({ gameId }: GameCommentsProps) {
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
                   {comment.user.avatar_url ? (
-                    <img
+                    <Image
                       src={comment.user.avatar_url}
                       alt={comment.user.username}
                       className="w-full h-full rounded-full object-cover"
@@ -138,5 +145,5 @@ export function GameComments({ gameId }: GameCommentsProps) {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

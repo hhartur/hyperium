@@ -3,6 +3,13 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
+type GameWhereInput = {
+  OR?: GameWhereInput[];
+  title?: { contains: string; mode?: 'insensitive' | 'default' };
+  developer?: { contains: string; mode?: 'insensitive' | 'default' };
+  is_active?: boolean;
+};
+
 export async function GET(req: Request) {
   const sessionToken = (await cookies()).get('session_token')?.value;
 
@@ -20,7 +27,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const searchQuery = searchParams.get('searchQuery');
 
-    const where: any = {};
+    const where: GameWhereInput = {};
 
     if (searchQuery) {
       where.OR = [

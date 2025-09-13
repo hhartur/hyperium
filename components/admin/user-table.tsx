@@ -1,107 +1,118 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Search, UserCheck, UserX, Edit } from 'lucide-react'
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, UserCheck, UserX, Edit } from "lucide-react";
 
 interface UserProfile {
-  id: string
-  email: string
-  username: string
-  avatar_url?: string | null
-  is_admin: boolean
-  created_at: Date
+  id: string;
+  email: string;
+  username: string;
+  avatar_url?: string | null;
+  is_admin: boolean;
+  created_at: Date;
 }
 
 export function UserTable() {
-  const [users, setUsers] = useState<UserProfile[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [editingUser, setEditingUser] = useState<string | null>(null)
-  const [editForm, setEditForm] = useState({ username: '', email: '' })
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [editingUser, setEditingUser] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ username: "", email: "" });
 
   useEffect(() => {
-    fetchUsers()
-  }, [])
+    const fetchUsers = async () => {
+      try {
+        const params = new URLSearchParams();
+        if (searchQuery) params.set("searchQuery", searchQuery);
 
-  const fetchUsers = async () => {
-    try {
-      const params = new URLSearchParams();
-      if (searchQuery) params.set('searchQuery', searchQuery);
-
-      const response = await fetch(`/api/admin/users?${params.toString()}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        const response = await fetch(`/api/admin/users?${params.toString()}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setLoading(false);
       }
-      const data = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error('Error fetching users:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+    };
+
+    fetchUsers();
+  }, [searchQuery]);
 
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
     try {
-      const response = await fetch('/api/admin/users', {
-        method: 'PUT',
+      const response = await fetch("/api/admin/users", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ userId, is_admin: !currentStatus }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update admin status');
+        throw new Error("Failed to update admin status");
       }
 
       // Update local state
-      setUsers(users.map(user =>
-        user.id === userId ? { ...user, is_admin: !currentStatus } : user
-      ))
+      setUsers(
+        users.map((user) =>
+          user.id === userId ? { ...user, is_admin: !currentStatus } : user
+        )
+      );
     } catch (error) {
-      console.error('Error updating admin status:', error)
+      console.error("Error updating admin status:", error);
     }
-  }
+  };
 
   const updateUserDetails = async (userId: string) => {
     try {
-      const response = await fetch('/api/admin/users', {
-        method: 'PUT',
+      const response = await fetch("/api/admin/users", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, username: editForm.username, email: editForm.email }),
+        body: JSON.stringify({
+          userId,
+          username: editForm.username,
+          email: editForm.email,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update user details');
+        throw new Error("Failed to update user details");
       }
 
       // Update local state
-      setUsers(users.map(user =>
-        user.id === userId ? { ...user, username: editForm.username, email: editForm.email } : user
-      ))
-      setEditingUser(null)
-      setEditForm({ username: '', email: '' })
+      setUsers(
+        users.map((user) =>
+          user.id === userId
+            ? { ...user, username: editForm.username, email: editForm.email }
+            : user
+        )
+      );
+      setEditingUser(null);
+      setEditForm({ username: "", email: "" });
     } catch (error) {
-      console.error('Error updating user details:', error)
+      console.error("Error updating user details:", error);
     }
-  }
+  };
 
   const startEditing = (user: UserProfile) => {
-    setEditingUser(user.id)
-    setEditForm({ username: user.username, email: user.email })
-  }
+    setEditingUser(user.id);
+    setEditForm({ username: user.username, email: user.email });
+  };
 
-  const filteredUsers = users.filter(user =>
-    user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredUsers = users.filter(
+    (user) =>
+      user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -113,7 +124,7 @@ export function UserTable() {
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -137,7 +148,10 @@ export function UserTable() {
       <CardContent>
         <div className="space-y-4">
           {filteredUsers.map((user) => (
-            <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+            <div
+              key={user.id}
+              className="flex items-center justify-between p-4 border rounded-lg"
+            >
               <div className="flex items-center space-x-4">
                 <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
                   <span className="text-primary-600 font-semibold">
@@ -149,13 +163,17 @@ export function UserTable() {
                     <div className="space-y-2">
                       <Input
                         value={editForm.username}
-                        onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, username: e.target.value })
+                        }
                         placeholder="Username"
                         className="w-32"
                       />
                       <Input
                         value={editForm.email}
-                        onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, email: e.target.value })
+                        }
                         placeholder="Email"
                         className="w-48"
                       />
@@ -163,7 +181,9 @@ export function UserTable() {
                   ) : (
                     <div>
                       <p className="font-medium">{user.username}</p>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {user.email}
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         Joined {new Date(user.created_at).toLocaleDateString()}
                       </p>
@@ -230,5 +250,5 @@ export function UserTable() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

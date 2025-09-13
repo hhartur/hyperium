@@ -3,7 +3,7 @@ import { getSession } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
 
-export async function GET(req: Request) {
+export async function GET() {
   const sessionToken = (await cookies()).get('session_token')?.value;
 
   if (!sessionToken) {

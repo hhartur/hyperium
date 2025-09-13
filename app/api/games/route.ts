@@ -3,6 +3,12 @@ import { getSession } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
 
+type GameWhereInput = {
+  is_active?: boolean;
+  genre?: { has: string };
+  title?: { contains: string; mode?: 'insensitive' | 'default' };
+};
+
 export async function POST(req: Request) {
   const sessionToken = (await cookies()).get('session_token')?.value;
 
@@ -54,7 +60,7 @@ export async function GET(req: Request) {
     const category = searchParams.get('category');
     const searchQuery = searchParams.get('searchQuery');
 
-    const where: any = { is_active: true };
+    const where: GameWhereInput = { is_active: true };
 
     if (category) {
       where.genre = { has: category };

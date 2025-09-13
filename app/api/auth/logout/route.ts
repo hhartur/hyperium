@@ -2,7 +2,7 @@ import { deleteSession } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
     const cookieStore = await cookies(); // pega os cookies do request
     const sessionToken = cookieStore.get('session_token')?.value;

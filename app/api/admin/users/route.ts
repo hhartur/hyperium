@@ -3,6 +3,12 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
+type UserWhereInput = {
+  OR?: UserWhereInput[];
+  username?: { contains: string; mode?: 'insensitive' | 'default' };
+  email?: { contains: string; mode?: 'insensitive' | 'default' };
+};
+
 export async function GET(req: Request) {
   const sessionToken = (await cookies()).get('session_token')?.value;
 
@@ -20,7 +26,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const searchQuery = searchParams.get('searchQuery');
 
-    const where: any = {};
+    const where: UserWhereInput = {};
 
     if (searchQuery) {
       where.OR = [

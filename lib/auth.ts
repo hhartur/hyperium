@@ -2,7 +2,6 @@ import prisma from './prisma';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
-import { getCookie, setCookie, deleteCookie } from 'cookies-next';
 
 export async function hashPassword(password: string) {
   const salt = await bcrypt.genSalt(10);

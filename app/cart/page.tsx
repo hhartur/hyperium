@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Trash2, ShoppingCart } from 'lucide-react'
 import { useAuthContext } from '@/components/providers/auth-provider'
 import { useCart } from '@/components/providers/cart-provider'
+import Image from 'next/image';
 
 export default function CartPage() {
   const { user } = useAuthContext()
@@ -95,7 +96,7 @@ export default function CartPage() {
               <Card key={item.id}>
                 <CardContent className="p-4">
                   <div className="flex gap-4">
-                    <img
+                    <Image
                       src={item.game.image_url || '/placeholder-game.jpg'}
                       alt={item.game.title}
                       className="w-20 h-20 object-cover rounded"

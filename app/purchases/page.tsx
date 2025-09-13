@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { MessageCircle, Download, History } from 'lucide-react'
-import Link from 'next/link'
 import { useAuthContext } from '@/components/providers/auth-provider'
+import Image from 'next/image'
 
 interface Purchase {
   id: string
@@ -126,7 +126,7 @@ export default function PurchasesPage() {
             <Card key={purchase.id}>
               <CardContent className="p-4">
                 <div className="flex gap-4">
-                  <img
+                  <Image
                     src={purchase.games.image_url || '/placeholder-game.jpg'}
                     alt={purchase.games.title}
                     className="w-20 h-20 object-cover rounded"

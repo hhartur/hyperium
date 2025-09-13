@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '../ui/badge'
 import { Star, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface Game {
   id: string;
@@ -69,7 +70,7 @@ export function FeaturedGames() {
           return (
             <Card key={game.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-video relative overflow-hidden">
-                <img
+                <Image
                   src={game.image_url || '/placeholder-game.jpg'}
                   alt={game.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
