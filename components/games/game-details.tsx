@@ -193,7 +193,7 @@ export function GameDetails({ game }: GameDetailsProps) {
                 </Button>
               ) : (
                 <>
-                  <Button onClick={purchaseGame} className="w-full" size="lg" disabled={!user}>
+                  <Button onClick={purchaseGame} className="w-full" size="lg" disabled={!user} variant='outline'>
                     Purchase Now
                   </Button>
                   <Button onClick={addToCart} variant="outline" className="w-full" size="lg" disabled={!user}>
