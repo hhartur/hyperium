@@ -4,12 +4,6 @@ import { GameComments } from '@/components/games/game-comments'
 import prisma from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 
-interface GamePageProps {
-  params: {
-    id: string
-  }
-}
-
 async function getGame(id: string) {
   const game = await prisma.game.findUnique({
     where: {
@@ -37,7 +31,7 @@ async function getGame(id: string) {
   };
 }
 
-export default async function GamePage({ params }: GamePageProps) {
+export default async function GamePage({ params }:  { params: { id: string } }) {
   const game = await getGame(params.id)
 
   if (!game) {

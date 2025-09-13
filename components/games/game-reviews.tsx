@@ -22,9 +22,7 @@ interface Review {
   };
 }
 
-export function GameReviews({ params }: { params: { id: string } }) {
-  const gameId = params.id;
-  
+export function GameReviews({ gameId }: { gameId: string}) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [userReview, setUserReview] = useState<Review | null>(null);
   const [loading, setLoading] = useState(true);
