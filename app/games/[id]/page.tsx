@@ -6,10 +6,35 @@ import { GameReviews } from '@/components/games/game-reviews'
 import { GameComments } from '@/components/games/game-comments'
 import { useParams, useRouter } from 'next/navigation'
 
+interface Game {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  discount_price?: number | null;
+  image_url: string;
+  developer: string;
+  publisher: string;
+  release_date: Date;
+  genre: string[];
+  tags: string[];
+  screenshots: string[];
+  video_url?: string | null;
+  file_url?: string | null;
+  seller_id: string;
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
+  seller: {
+    username: string;
+    avatar_url?: string | null;
+  } | null;
+}
+
 export default function GamePage() {
   const params = useParams()
   const router = useRouter()
-  const [game, setGame] = useState<any>(null)
+  const [game, setGame] = useState<Game | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -26,7 +51,7 @@ export default function GamePage() {
           return
         }
 
-        const data = await res.json() // <- converte para JSON
+        const data: Game = await res.json() // tipado
         setGame(data)
       } catch (err) {
         console.error(err)
