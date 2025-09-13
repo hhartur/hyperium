@@ -5,6 +5,7 @@
       "name": "hyperium",
       "dependencies": {
         "@hookform/resolvers": "^5.2.1",
+        "@prisma/extension-accelerate": "^2.0.2",
         "@radix-ui/react-dialog": "^1.1.15",
         "@supabase/supabase-js": "^2.57.4",
         "@types/bcryptjs": "^2.4.6",
@@ -236,6 +237,8 @@
     "@prisma/engines": ["@prisma/engines@6.16.1", "", { "dependencies": { "@prisma/debug": "6.16.1", "@prisma/engines-version": "6.16.0-7.1c57fdcd7e44b29b9313256c76699e91c3ac3c43", "@prisma/fetch-engine": "6.16.1", "@prisma/get-platform": "6.16.1" } }, "sha512-EOnEM5HlosPudBqbI+jipmaW/vQEaF0bKBo4gVkGabasINHR6RpC6h44fKZEqx4GD8CvH+einD2+b49DQrwrAg=="],
 
     "@prisma/engines-version": ["@prisma/engines-version@6.16.0-7.1c57fdcd7e44b29b9313256c76699e91c3ac3c43", "", {}, "sha512-ThvlDaKIVrnrv97ujNFDYiQbeMQpLa0O86HFA2mNoip4mtFqM7U5GSz2ie1i2xByZtvPztJlNRgPsXGeM/kqAA=="],
+
+    "@prisma/extension-accelerate": ["@prisma/extension-accelerate@2.0.2", "", { "peerDependencies": { "@prisma/client": ">=4.16.1" } }, "sha512-yZK6/k7uOEFpEsKoZezQS1CKDboPtBCQ0NyI70e1Un8tDiRgg80iWGyjsJmRpps2ZIut3MroHP+dyR3wVKh8lA=="],
 
     "@prisma/fetch-engine": ["@prisma/fetch-engine@6.16.1", "", { "dependencies": { "@prisma/debug": "6.16.1", "@prisma/engines-version": "6.16.0-7.1c57fdcd7e44b29b9313256c76699e91c3ac3c43", "@prisma/get-platform": "6.16.1" } }, "sha512-fl/PKQ8da5YTayw86WD3O9OmKJEM43gD3vANy2hS5S1CnfW2oPXk+Q03+gUWqcKK306QqhjjIHRFuTZ31WaosQ=="],
 

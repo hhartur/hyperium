@@ -100,11 +100,11 @@ CREATE TABLE "public"."cart" (
 -- CreateTable
 CREATE TABLE "public"."Review" (
     "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "game_id" TEXT NOT NULL,
+    "user_id" UUID NOT NULL,
+    "game_id" UUID NOT NULL,
     "rating" INTEGER NOT NULL,
     "comment" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );

@@ -26,7 +26,7 @@ async function sendVerificationEmail(email: string, token: string) {
       },
     });
 
-    const verificationUrl = `http://localhost:3000/api/auth/verify-email/${token}`;
+    const verificationUrl = `https://hyperiumgamestore.vercel.app/api/auth/verify-email/${token}`;
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
