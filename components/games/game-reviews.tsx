@@ -22,11 +22,9 @@ interface Review {
   };
 }
 
-interface GameReviewsProps {
-  gameId: string;
-}
-
-export function GameReviews({ gameId }: GameReviewsProps) {
+export function GameReviews({ params }: { params: { id: string } }) {
+  const gameId = params.id;
+  
   const [reviews, setReviews] = useState<Review[]>([]);
   const [userReview, setUserReview] = useState<Review | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,7 +66,7 @@ export function GameReviews({ gameId }: GameReviewsProps) {
 
   useEffect(() => {
     fetchReviews();
-  }, [gameId]);
+  }, [fetchReviews]);
 
   const submitReview = async (rating: number, comment?: string) => {
     if (!user) return;
