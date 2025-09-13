@@ -9,39 +9,43 @@ datasource db {
 }
 
 model User {
-  id                       String    @id @default(uuid()) @db.Uuid
+  id                       String    @id @default(uuid()) @map("id") @db.Uuid
   email                    String    @unique
   username                 String
   password_hash            String
   email_verified           Boolean   @default(false)
-  email_verification_token String?   @unique
+  email_verification_token String?   @map("email_verification_token") @unique
   is_admin                 Boolean   @default(false)
   avatar_url               String?
-  created_at               DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at               DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  created_at               DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at               DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  sessions    Session[]
-  games       Game[]    @relation("UserGames")
-  reports     Report[]  @relation("UserReports")
-  purchases   Purchase[] @relation("UserPurchases")
-  reviews     Review[]
-  carts       Cart[]
-  comments    Comment[]
+  sessions                 Session[]
+  games                    Game[]    @relation("UserGames")
+  reports                  Report[]  @relation("UserReports")
+  purchases                Purchase[] @relation("UserPurchases")
+
+  reviews Review[]
+  carts Cart[]
+  comments Comment[]
+  @@map("users")
 }
 
 model Session {
-  session_token String    @id
-  user_id       String    @db.Uuid
-  expires_at    DateTime  @db.Timestamptz(6)
-  created_at    DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  session_token String    @id @map("session_token")
+  user_id       String    @map("user_id") @db.Uuid
+  expires_at    DateTime  @map("expires_at") @db.Timestamptz(6)
+  created_at    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at    DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  user User @relation(fields: [user_id], references: [id])
+  user          User      @relation(fields: [user_id], references: [id])
+
+  @@map("sessions")
 }
 
 model Game {
-  id             String    @id @default(uuid()) @db.Uuid
-  seller_id      String    @db.Uuid
+  id             String    @id @default(uuid()) @map("id") @db.Uuid
+  seller_id      String    @map("seller_id") @db.Uuid
   title          String
   description    String
   price          Decimal   @db.Decimal(10, 2)
@@ -56,15 +60,18 @@ model Game {
   video_url      String?
   file_url       String?
   is_active      Boolean   @default(true)
-  created_at     DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  created_at     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user_id        String?   @map("user_id") @db.Uuid
 
-  seller    User?      @relation("UserGames", fields: [seller_id], references: [id])
-  reports   Report[]   @relation("GameReports")
-  purchases Purchase[] @relation("GamePurchases")
-  reviews   Review[]
-  carts     Cart[]
-  comments  Comment[]
+  seller         User?      @relation("UserGames", fields: [user_id], references: [id])
+  reports        Report[]   @relation("GameReports")
+  purchases      Purchase[] @relation("GamePurchases")
+
+  reviews Review[]
+  carts Cart[]
+  comments Comment[]
+  @@map("games")
 }
 
 model Report {
@@ -76,51 +83,59 @@ model Report {
   status      String   @default("pending")
   created_at  DateTime @default(now()) @db.Timestamptz(6)
 
-  reporter User @relation("UserReports", fields: [reporter_id], references: [id])
-  game     Game @relation("GameReports", fields: [game_id], references: [id])
+  reporter  User @relation("UserReports", fields: [reporter_id], references: [id])
+  game      Game @relation("GameReports", fields: [game_id], references: [id])
+
+  @@map("reports")
 }
 
 model Purchase {
-  id          String   @id @default(uuid()) @db.Uuid
-  user_id     String   @db.Uuid
-  game_id     String   @db.Uuid
-  price       Decimal  @db.Decimal(10, 2)
-  amount_paid Decimal  @db.Decimal(10, 2)
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  game_id    String   @db.Uuid
+  price      Decimal  @db.Decimal(10, 2)
+  amount_paid Decimal  @db.Decimal(10, 2) // <-- adiciona aqui
+  created_at DateTime @default(now()) @db.Timestamptz(6)
 
   user User @relation("UserPurchases", fields: [user_id], references: [id])
   game Game @relation("GamePurchases", fields: [game_id], references: [id])
+
+  @@map("purchases")
 }
 
 model Comment {
-  id         String   @id @default(uuid()) @db.Uuid
-  game_id    String   @db.Uuid
-  user_id    String   @db.Uuid
-  content    String
+  id        String   @id @default(uuid()) @db.Uuid
+  game_id   String   @db.Uuid
+  user_id   String   @db.Uuid
+  content   String
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
   user User @relation(fields: [user_id], references: [id])
   game Game @relation(fields: [game_id], references: [id])
+
+  @@map("comments")
 }
 
 model Cart {
-  id         String   @id @default(uuid()) @db.Uuid
-  user_id    String   @db.Uuid
-  game_id    String   @db.Uuid
-  quantity   Int      @default(1)
+  id      String   @id @default(uuid()) @db.Uuid
+  user_id String   @db.Uuid
+  game_id String   @db.Uuid
   created_at DateTime @default(now()) @db.Timestamptz(6)
+  quantity  Int      @default(1)       // <--- adiciona este campo
 
   user User @relation(fields: [user_id], references: [id])
   game Game @relation(fields: [game_id], references: [id])
+
+  @@map("cart")
 }
 
 model Review {
-  id         String   @id @default(uuid()) @db.Uuid
-  user_id    String   @db.Uuid
-  game_id    String   @db.Uuid
-  rating     Int
-  comment    String?
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  id        String   @id @default(cuid())
+  user_id   String
+  game_id   String
+  rating    Int
+  comment   String?
+  created_at DateTime @default(now())
 
   user User @relation(fields: [user_id], references: [id])
   game Game @relation(fields: [game_id], references: [id])
