@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma" // Output to a specific folder
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                       String    @id @default(uuid()) @map("id") @db.Uuid
+  email                    String    @unique
+  username                 String
+  password_hash            String
+  email_verified           Boolean   @default(false)
+  email_verification_token String?   @map("email_verification_token")
+  is_admin                 Boolean   @default(false)
+  avatar_url               String?
+  created_at               DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at               DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  sessions                 Session[]
+  games                    Game[]    @relation("UserGames")
+
+  @@map("users") // Map model to existing table name
+}
+
+model Session {
+  session_token String    @id @map("session_token")
+  user_id       String    @map("user_id") @db.Uuid
+  expires_at    DateTime  @map("expires_at") @db.Timestamptz(6)
+  created_at    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at    DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user          User      @relation(fields: [user_id], references: [id])
+
+  @@map("sessions") // Map model to existing table name
+}
+
+model Game {
+  id             String    @id @default(uuid()) @map("id") @db.Uuid
+  seller_id      String    @map("seller_id") @db.Uuid
+  title          String
+  description    String
+  price          Decimal   @db.Decimal(10, 2)
+  discount_price Decimal?  @db.Decimal(10, 2)
+  developer      String
+  publisher      String
+  release_date   DateTime  @db.Date
+  genre          String[]  @db.Text
+  tags           String[]  @default([]) @db.Text
+  image_url      String
+  screenshots    String[]  @default([]) @db.Text
+  video_url      String?
+  file_url       String?
+  is_active      Boolean   @default(true)
+  created_at     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user_id        String?    @map("user_id") @db.Uuid // Assuming this is the user who added/modified the game
+
+  seller         User?      @relation("UserGames", fields: [user_id], references: [id])
+
+  @@map("games") // Map model to existing table name
+}
