@@ -1,43 +1,46 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { GameDetails } from '@/components/games/game-details'
 import { GameReviews } from '@/components/games/game-reviews'
 import { GameComments } from '@/components/games/game-comments'
-import prisma from '@/lib/prisma'
-import { notFound, useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
-async function getGame(id: string) {
-  const game = await prisma.game.findUnique({
-    where: {
-      id: id,
-      is_active: true,
-    },
-    include: {
-      seller: {
-        select: {
-          username: true,
-          avatar_url: true,
-        },
-      },
-    },
-  });
+export default function GamePage() {
+  const params = useParams()
+  const router = useRouter()
+  const [game, setGame] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
-  if (!game) {
-    return null;
-  }
+  useEffect(() => {
+    async function fetchGame() {
+      try {
+        const res = await fetch("/api/games/get-game", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: params.id })
+        })
 
-  return {
-    ...game,
-    price: game.price.toNumber(),
-    discount_price: game.discount_price?.toNumber(),
-  };
-}
+        if (!res.ok) {
+          router.push("/404") // redireciona se não encontrar
+          return
+        }
 
-export default async function GamePage() {
-  const params = useParams();
-  const game = await getGame(params.id as string)
+        const data = await res.json() // <- converte para JSON
+        setGame(data)
+      } catch (err) {
+        console.error(err)
+        router.push("/404")
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  if (!game) {
-    notFound()
-  }
+    if (params.id) fetchGame()
+  }, [params.id, router])
+
+  if (loading) return <p>Loading...</p>
+  if (!game) return null
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
