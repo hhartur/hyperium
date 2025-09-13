@@ -9,12 +9,15 @@ import prisma from '@/lib/prisma'
 
 interface Review {
   id: string
-  game_id: string
   user_id: string
+  game_id: string
   rating: number
-  comment?: string | null
+  comment: string | null
   created_at: Date
-  users: { username: string; avatar_url?: string | null }
+  user: {    // <-- aqui deve ser `user`, não `users`
+    username: string
+    avatar_url?: string | null
+  }
 }
 
 interface GameReviewsProps {
@@ -38,7 +41,7 @@ export function GameReviews({ gameId }: GameReviewsProps) {
           game_id: gameId,
         },
         include: {
-          users: {
+          user: {
             select: { username: true, avatar_url: true },
           },
         },
@@ -124,25 +127,24 @@ export function GameReviews({ gameId }: GameReviewsProps) {
             onSubmit={submitReview}
           />
         )}
-
         {reviews.map((review) => (
           <div key={review.id} className="border-b pb-4 last:border-b-0">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                {review.users.avatar_url ? (
+                {review.user.avatar_url ? (
                   <img
-                    src={review.users.avatar_url}
-                    alt={review.users.username}
+                    src={review.user.avatar_url}
+                    alt={review.user.username}
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
                   <span className="text-sm font-medium">
-                    {review.users.username[0].toUpperCase()}
+                    {review.user.username[0].toUpperCase()}
                   </span>
                 )}
               </div>
               <div>
-                <p className="font-medium">{review.users.username}</p>
+                <p className="font-medium">{review.user.username}</p>
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <Star

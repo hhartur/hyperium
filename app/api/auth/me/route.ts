@@ -4,11 +4,12 @@ import { NextResponse } from 'next/server';
 export async function GET(req: Request) {
   try {
     const cookieHeader = req.headers.get('cookie') || '';
-    const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
+    const cookies = cookieHeader.split(';').reduce<Record<string, string>>((acc, cookie) => {
       const [name, value] = cookie.trim().split('=');
       acc[name] = value;
       return acc;
     }, {});
+
 
     const sessionToken = cookies['session_token'];
 

@@ -13,11 +13,11 @@ import { toast } from 'sonner';
 const addGameSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
-  price: z.preprocess((a) => parseFloat(z.string().parse(a)), z.number().positive('Price must be a positive number')),
+  price: z.coerce.number().positive('Price must be a positive number'),
   genre: z.string().min(1, 'Genre is required'),
   developer: z.string().min(1, 'Developer is required'),
   publisher: z.string().min(1, 'Publisher is required'),
-  image_url: z.string().url('Invalid URL'), // Revert to URL input
+  image_url: z.string().url('Invalid URL'),
 });
 
 type AddGameForm = z.infer<typeof addGameSchema>;
@@ -26,7 +26,7 @@ export default function AddGamePage() {
   const { user, loading } = useAuthContext();
   const router = useRouter();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<AddGameForm>({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(addGameSchema),
   });
 
@@ -40,9 +40,7 @@ export default function AddGamePage() {
     try {
       const response = await fetch('/api/games', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
@@ -52,7 +50,7 @@ export default function AddGamePage() {
       } else {
         toast.error('Failed to add game');
       }
-    } catch (error) {
+    } catch {
       toast.error('An error occurred');
     }
   };

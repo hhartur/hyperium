@@ -1,12 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/prisma" // Output to a specific folder
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -20,7 +14,7 @@ model User {
   username                 String
   password_hash            String
   email_verified           Boolean   @default(false)
-  email_verification_token String?   @map("email_verification_token")
+  email_verification_token String?   @map("email_verification_token") @unique
   is_admin                 Boolean   @default(false)
   avatar_url               String?
   created_at               DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -28,8 +22,13 @@ model User {
 
   sessions                 Session[]
   games                    Game[]    @relation("UserGames")
+  reports                  Report[]  @relation("UserReports")
+  purchases                Purchase[] @relation("UserPurchases")
 
-  @@map("users") // Map model to existing table name
+  reviews Review[]
+  carts Cart[]
+  comments Comment[]
+  @@map("users")
 }
 
 model Session {
@@ -41,7 +40,7 @@ model Session {
 
   user          User      @relation(fields: [user_id], references: [id])
 
-  @@map("sessions") // Map model to existing table name
+  @@map("sessions")
 }
 
 model Game {
@@ -63,9 +62,81 @@ model Game {
   is_active      Boolean   @default(true)
   created_at     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updated_at     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  user_id        String?    @map("user_id") @db.Uuid // Assuming this is the user who added/modified the game
+  user_id        String?   @map("user_id") @db.Uuid
 
   seller         User?      @relation("UserGames", fields: [user_id], references: [id])
+  reports        Report[]   @relation("GameReports")
+  purchases      Purchase[] @relation("GamePurchases")
 
-  @@map("games") // Map model to existing table name
+  reviews Review[]
+  carts Cart[]
+  comments Comment[]
+  @@map("games")
+}
+
+model Report {
+  id          String   @id @default(uuid()) @db.Uuid
+  game_id     String   @db.Uuid
+  reporter_id String   @db.Uuid
+  reason      String
+  description String?
+  status      String   @default("pending")
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  reporter  User @relation("UserReports", fields: [reporter_id], references: [id])
+  game      Game @relation("GameReports", fields: [game_id], references: [id])
+
+  @@map("reports")
+}
+
+model Purchase {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  game_id    String   @db.Uuid
+  price      Decimal  @db.Decimal(10, 2)
+  amount_paid Decimal  @db.Decimal(10, 2) // <-- adiciona aqui
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation("UserPurchases", fields: [user_id], references: [id])
+  game Game @relation("GamePurchases", fields: [game_id], references: [id])
+
+  @@map("purchases")
+}
+
+model Comment {
+  id        String   @id @default(uuid()) @db.Uuid
+  game_id   String   @db.Uuid
+  user_id   String   @db.Uuid
+  content   String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id])
+  game Game @relation(fields: [game_id], references: [id])
+
+  @@map("comments")
+}
+
+model Cart {
+  id      String   @id @default(uuid()) @db.Uuid
+  user_id String   @db.Uuid
+  game_id String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  quantity  Int      @default(1)       // <--- adiciona este campo
+
+  user User @relation(fields: [user_id], references: [id])
+  game Game @relation(fields: [game_id], references: [id])
+
+  @@map("cart")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  user_id   String
+  game_id   String
+  rating    Int
+  comment   String?
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+  game Game @relation(fields: [game_id], references: [id])
 }

@@ -172,7 +172,7 @@ export function GameModeration() {
                 </div>
               </div>
             </div>
-          ))
+          ))}
           {filteredGames.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               No games found matching your search.

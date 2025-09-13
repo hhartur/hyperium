@@ -96,28 +96,28 @@ export default function CartPage() {
                 <CardContent className="p-4">
                   <div className="flex gap-4">
                     <img
-                      src={item.games.image_url || '/placeholder-game.jpg'}
-                      alt={item.games.title}
+                      src={item.game.image_url || '/placeholder-game.jpg'}
+                      alt={item.game.title}
                       className="w-20 h-20 object-cover rounded"
                     />
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{item.games.title}</h3>
-                      <p className="text-sm text-muted-foreground">{item.games.developer}</p>
+                      <h3 className="font-semibold text-lg">{item.game.title}</h3>
+                      <p className="text-sm text-muted-foreground">{item.game.developer}</p>
                       <div className="flex items-center gap-2 mt-2">
-                        {item.games.discount_price ? (
+                        {item.game.discount_price ? (
                           <>
                             <span className="text-sm text-muted-foreground line-through">
-                              ${item.games.price.toFixed(2)}
+                              ${item.game.price.toFixed(2)}
                             </span>
                             <span className="font-bold text-primary-600">
-                              ${item.games.discount_price.toFixed(2)}
+                              ${item.game.discount_price.toFixed(2)}
                             </span>
                             <Badge className="bg-red-600 text-white">
-                              -{Math.round((1 - item.games.discount_price / item.games.price) * 100)}%
+                              -{Math.round((1 - item.game.discount_price / item.game.price) * 100)}%
                             </Badge>
                           </>
                         ) : (
-                          <span className="font-bold">${item.games.price.toFixed(2)}</span>
+                          <span className="font-bold">${item.game.price.toFixed(2)}</span>
                         )}
                       </div>
                     </div>

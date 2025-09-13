@@ -13,6 +13,7 @@ interface Purchase {
   id: string
   game_id: string
   user_id: string
+  price: number
   amount_paid: number
   purchased_at: Date
   games: {

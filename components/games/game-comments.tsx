@@ -14,7 +14,7 @@ interface Comment {
   user_id: string
   content: string
   created_at: Date
-  users: { username: string; avatar_url?: string | null }
+  user: { username: string; avatar_url?: string | null }
 }
 
 interface GameCommentsProps {
@@ -34,26 +34,17 @@ export function GameComments({ gameId }: GameCommentsProps) {
   const fetchComments = async () => {
     try {
       const data = await prisma.comment.findMany({
-        where: {
-          game_id: gameId,
-        },
-        include: {
-          users: {
-            select: { username: true, avatar_url: true },
-          },
-        },
-        orderBy: {
-          created_at: 'desc',
-        },
-      });
-
-      setComments(data as Comment[]);
-      setLoading(false);
+        where: { game_id: gameId },
+        include: { user: { select: { username: true, avatar_url: true } } },
+        orderBy: { created_at: 'desc' },
+      })
+      setComments(data as Comment[])
+      setLoading(false)
     } catch (error) {
-      console.error('Failed to fetch comments', error);
-      setLoading(false);
+      console.error('Failed to fetch comments', error)
+      setLoading(false)
     }
-  };
+  }
 
   const submitComment = async () => {
     if (!user || !newComment.trim()) return
@@ -65,14 +56,13 @@ export function GameComments({ gameId }: GameCommentsProps) {
           game_id: gameId,
           content: newComment.trim(),
         },
-      });
-
-      setNewComment('');
-      fetchComments();
+      })
+      setNewComment('')
+      fetchComments()
     } catch (error) {
-      console.error('Failed to submit comment', error);
+      console.error('Failed to submit comment', error)
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -123,20 +113,20 @@ export function GameComments({ gameId }: GameCommentsProps) {
             <div key={comment.id} className="border-b pb-4 last:border-b-0">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                  {comment.users.avatar_url ? (
+                  {comment.user.avatar_url ? (
                     <img
-                      src={comment.users.avatar_url}
-                      alt={comment.users.username}
+                      src={comment.user.avatar_url}
+                      alt={comment.user.username}
                       className="w-full h-full rounded-full object-cover"
                     />
                   ) : (
                     <span className="text-sm font-medium">
-                      {comment.users.username[0].toUpperCase()}
+                      {comment.user.username[0].toUpperCase()}
                     </span>
                   )}
                 </div>
                 <div>
-                  <p className="font-medium">{comment.users.username}</p>
+                  <p className="font-medium">{comment.user.username}</p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(comment.created_at).toLocaleDateString()}
                   </p>

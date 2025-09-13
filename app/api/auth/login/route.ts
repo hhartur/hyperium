@@ -1,6 +1,5 @@
 import { login } from '@/lib/auth';
 import { NextResponse } from 'next/server';
-import { setCookie } from 'cookies-next';
 
 export async function POST(req: Request) {
   try {
@@ -12,8 +11,19 @@ export async function POST(req: Request) {
 
     const sessionToken = await login(email, password);
 
-    const response = new NextResponse('Logged in successfully', { status: 200 });
-    setCookie('session_token', sessionToken, { req, res: response, httpOnly: process.env.NODE_ENV === 'production', secure: process.env.NODE_ENV === 'production' });
+    const response = NextResponse.json(
+      { message: 'Logged in successfully' },
+      { status: 200 }
+    );
+
+    response.cookies.set({
+      name: 'session_token',
+      value: sessionToken,
+      httpOnly: process.env.NODE_ENV === 'production',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 dias
+    });
 
     return response;
   } catch (error: any) {

@@ -22,12 +22,12 @@ export async function GET(req: Request) {
         user_id: user.id,
       },
       include: {
-        games: {
+        game: {
           select: { id: true, title: true, developer: true, image_url: true, file_url: true, price: true, discount_price: true },
         },
       },
       orderBy: {
-        purchased_at: 'desc',
+        created_at: 'desc',
       },
     });
 
@@ -35,9 +35,9 @@ export async function GET(req: Request) {
       ...purchase,
       amount_paid: purchase.amount_paid.toNumber(),
       games: {
-        ...purchase.games,
-        price: purchase.games.price.toNumber(),
-        discount_price: purchase.games.discount_price?.toNumber(),
+        ...purchase.game,
+        price: purchase.game.price.toNumber(),
+        discount_price: purchase.game.discount_price?.toNumber(),
       }
     }));
 

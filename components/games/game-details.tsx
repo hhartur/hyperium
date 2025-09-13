@@ -1,50 +1,56 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { ShoppingCart, Star, Download, Flag, Play } from 'lucide-react'
-import { useAuthContext } from '@/components/providers/auth-provider'
-import prisma from '@/lib/prisma'
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ShoppingCart, Star, Download, Flag, Play } from "lucide-react";
+import { useAuthContext } from "@/components/providers/auth-provider";
+import prisma from "@/lib/prisma";
 
 interface Game {
-  id: string
-  title: string
-  description: string
-  price: number
-  discount_price?: number | null
-  image_url: string
-  developer: string
-  publisher: string
-  release_date: Date
-  genre: string[]
-  tags: string[]
-  screenshots: string[]
-  video_url?: string | null
-  file_url?: string | null
-  seller_id: string
-  is_active: boolean
-  created_at: Date
-  updated_at: Date
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  discount_price?: number | null;
+  image_url: string;
+  developer: string;
+  publisher: string;
+  release_date: Date;
+  genre: string[];
+  tags: string[];
+  screenshots: string[];
+  video_url?: string | null;
+  file_url?: string | null;
+  seller_id: string;
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
   seller: {
-    username: string
-    avatar_url?: string | null
-  } | null
+    username: string;
+    avatar_url?: string | null;
+  } | null;
 }
 
 interface GameDetailsProps {
-  game: Game
+  game: Game;
 }
 
 export function GameDetails({ game }: GameDetailsProps) {
-  const [isPurchased, setIsPurchased] = useState(false)
-  const [inCart, setInCart] = useState(false)
-  const { user } = useAuthContext()
+  const [isPurchased, setIsPurchased] = useState(false);
+  const [inCart, setInCart] = useState(false);
+  const { user } = useAuthContext();
 
   const addToCart = async () => {
-    if (!user) return
+    if (!user) return;
 
     try {
       await prisma.cart.create({
@@ -56,44 +62,51 @@ export function GameDetails({ game }: GameDetailsProps) {
       });
       setInCart(true);
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error("Error adding to cart:", error);
     }
   };
 
   const purchaseGame = async () => {
-    if (!user) return
+    if (!user) return;
 
-    const price = game.discount_price || game.price
+    const price = game.discount_price || game.price;
 
     try {
-      await prisma.purchase.create({
-        data: {
-          user_id: user.id,
-          game_id: game.id,
-          amount_paid: price,
-        },
+      await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: user.id, game_id: game.id }),
       });
+
       setIsPurchased(true);
     } catch (error) {
-      console.error('Error purchasing game:', error);
+      console.error("Error purchasing game:", error);
     }
   };
 
   const reportGame = async (reason: string, description?: string) => {
-    if (!user) return
+    if (!user) return;
 
     try {
-      await prisma.report.create({
-        data: {
+      const res = await fetch("/api/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           reporter_id: user.id,
-          reported_game_id: game.id,
+          game_id: game.id, // ← mesmo nome do schema
           reason,
           description,
-          status: 'pending',
-        },
+        }),
       });
+
+      if (res.ok) {
+        alert("Report submitted successfully!");
+      } else {
+        alert("Failed to submit report");
+      }
     } catch (error) {
-      console.error('Error reporting game:', error);
+      console.error("Error reporting game:", error);
+      alert("An error occurred");
     }
   };
 
@@ -104,7 +117,7 @@ export function GameDetails({ game }: GameDetailsProps) {
         {/* Hero Image */}
         <div className="relative aspect-video rounded-lg overflow-hidden">
           <img
-            src={game.image_url || '/placeholder-game.jpg'}
+            src={game.image_url || "/placeholder-game.jpg"}
             alt={game.title}
             className="w-full h-full object-cover"
           />
@@ -135,7 +148,9 @@ export function GameDetails({ game }: GameDetailsProps) {
         {/* Description */}
         <div>
           <h3 className="text-xl font-semibold mb-4">About This Game</h3>
-          <p className="text-muted-foreground leading-relaxed">{game.description}</p>
+          <p className="text-muted-foreground leading-relaxed">
+            {game.description}
+          </p>
         </div>
 
         {/* Tags */}
@@ -143,7 +158,9 @@ export function GameDetails({ game }: GameDetailsProps) {
           <h3 className="text-xl font-semibold mb-4">Tags</h3>
           <div className="flex flex-wrap gap-2">
             {game.tags.map((tag) => (
-              <Badge key={tag} variant="secondary">{tag}</Badge>
+              <Badge key={tag} variant="secondary">
+                {tag}
+              </Badge>
             ))}
           </div>
         </div>
@@ -158,7 +175,9 @@ export function GameDetails({ game }: GameDetailsProps) {
               <div className="flex items-center gap-2">
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                 <span className="font-medium">4.5</span>
-                <span className="text-sm text-muted-foreground">(123 reviews)</span>
+                <span className="text-sm text-muted-foreground">
+                  (123 reviews)
+                </span>
               </div>
             </div>
 
@@ -176,7 +195,9 @@ export function GameDetails({ game }: GameDetailsProps) {
                   </Badge>
                 </div>
               ) : (
-                <span className="text-2xl font-bold">${game.price.toFixed(2)}</span>
+                <span className="text-2xl font-bold">
+                  ${game.price.toFixed(2)}
+                </span>
               )}
             </div>
 
@@ -193,10 +214,22 @@ export function GameDetails({ game }: GameDetailsProps) {
                 </Button>
               ) : (
                 <>
-                  <Button onClick={purchaseGame} className="w-full" size="lg" disabled={!user} variant='outline'>
+                  <Button
+                    onClick={purchaseGame}
+                    className="w-full"
+                    size="lg"
+                    disabled={!user}
+                    variant="outline"
+                  >
                     Purchase Now
                   </Button>
-                  <Button onClick={addToCart} variant="outline" className="w-full" size="lg" disabled={!user}>
+                  <Button
+                    onClick={addToCart}
+                    variant="outline"
+                    className="w-full"
+                    size="lg"
+                    disabled={!user}
+                  >
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Add to Cart
                   </Button>
@@ -213,17 +246,30 @@ export function GameDetails({ game }: GameDetailsProps) {
 
             <div className="mt-6 pt-6 border-t">
               <div className="text-sm text-muted-foreground space-y-1">
-                <p><strong>Developer:</strong> {game.developer}</p>
-                <p><strong>Publisher:</strong> {game.publisher}</p>
-                <p><strong>Release Date:</strong> {new Date(game.release_date).toLocaleDateString()}</p>
-                <p><strong>Genres:</strong> {game.genre.join(', ')}</p>
+                <p>
+                  <strong>Developer:</strong> {game.developer}
+                </p>
+                <p>
+                  <strong>Publisher:</strong> {game.publisher}
+                </p>
+                <p>
+                  <strong>Release Date:</strong>{" "}
+                  {new Date(game.release_date).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>Genres:</strong> {game.genre.join(", ")}
+                </p>
               </div>
             </div>
 
             <div className="mt-6">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-muted-foreground">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground"
+                  >
                     <Flag className="w-4 h-4 mr-2" />
                     Report
                   </Button>
@@ -252,32 +298,40 @@ export function GameDetails({ game }: GameDetailsProps) {
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
-                  <span className="font-medium">{game.seller?.username[0].toUpperCase()}</span>
+                  <span className="font-medium">
+                    {game.seller?.username[0].toUpperCase()}
+                  </span>
                 )}
               </div>
               <div>
-                                <p className="font-medium">{game.seller?.username}</p>
-                <p className="text-sm text-muted-foreground">Independent Developer</p>
+                <p className="font-medium">{game.seller?.username}</p>
+                <p className="text-sm text-muted-foreground">
+                  Independent Developer
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }
 
-function ReportForm({ onSubmit }: { onSubmit: (reason: string, description?: string) => void }) {
-  const [reason, setReason] = useState('')
-  const [description, setDescription] = useState('')
+function ReportForm({
+  onSubmit,
+}: {
+  onSubmit: (reason: string, description?: string) => void;
+}) {
+  const [reason, setReason] = useState("");
+  const [description, setDescription] = useState("");
 
   const reasons = [
-    'Inappropriate content',
-    'Copyright infringement',
-    'Spam or misleading',
-    'Broken download',
-    'Other'
-  ]
+    "Inappropriate content",
+    "Copyright infringement",
+    "Spam or misleading",
+    "Broken download",
+    "Other",
+  ];
 
   return (
     <div className="space-y-4">
@@ -290,12 +344,16 @@ function ReportForm({ onSubmit }: { onSubmit: (reason: string, description?: str
         >
           <option value="">Select a reason</option>
           {reasons.map((r) => (
-            <option key={r} value={r}>{r}</option>
+            <option key={r} value={r}>
+              {r}
+            </option>
           ))}
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium mb-2">Description (optional)</label>
+        <label className="block text-sm font-medium mb-2">
+          Description (optional)
+        </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -308,5 +366,5 @@ function ReportForm({ onSubmit }: { onSubmit: (reason: string, description?: str
         Submit Report
       </Button>
     </div>
-  )
+  );
 }

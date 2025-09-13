@@ -221,7 +221,7 @@ export function UserTable() {
                 )}
               </div>
             </div>
-          ))
+          ))}
           {filteredUsers.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               No users found matching your search.
