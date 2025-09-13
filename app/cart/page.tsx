@@ -97,6 +97,7 @@ export default function CartPage() {
                 <CardContent className="p-4">
                   <div className="flex gap-4">
                     <Image
+                      fill
                       src={item.game.image_url || '/placeholder-game.jpg'}
                       alt={item.game.title}
                       className="w-20 h-20 object-cover rounded"

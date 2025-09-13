@@ -127,6 +127,7 @@ export function GameModeration() {
             >
               <div className="flex items-center space-x-4">
                 <Image
+                fill
                   src={game.image_url}
                   alt={game.title}
                   className="w-16 h-16 object-cover rounded-lg"

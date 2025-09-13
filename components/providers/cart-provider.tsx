@@ -50,85 +50,56 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
     setLoading(true);
     try {
-      const items = await prisma.cart.findMany({
-        where: { user_id: user.id },
-        include: {
-          game: {
-            select: {
-              id: true,
-              title: true,
-              price: true,
-              discount_price: true,
-              image_url: true,
-              developer: true,
-            },
-          },
-        },
+      const res = await fetch("/api/cart", {
+        headers: { "x-user-id": user.id },
       });
-      setCartItems(
-        items.map((item) => ({
-          ...item,
-          game: {
-            ...item.game,
-            price: Number(item.game.price),
-            discount_price: item.game.discount_price
-              ? Number(item.game.discount_price)
-              : undefined,
-          },
-        }))
-      );
-    } catch (error) {
-      console.error("Failed to fetch cart", error);
-      toast.error("Failed to load cart");
+      const data = await res.json();
+      setCartItems(data);
+    } catch (err) {
+      console.error("Failed to fetch cart", err);
     } finally {
       setLoading(false);
     }
   }, [user]);
+
+  const addToCart = async (gameId: string): Promise<void> => {
+    if (!user) {
+      toast.error("Please log in");
+      return;
+    }
+
+    try {
+      await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: user.id, game_id: gameId }),
+      });
+      toast.success("Item added");
+      fetchCart();
+    } catch (err) {
+      console.error("Failed to add to cart", err);
+      toast.error("Failed to add item");
+    }
+  };
+
+  const removeFromCart = async (cartId: string) => {
+    try {
+      await fetch("/api/cart", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cart_id: cartId }),
+      });
+      fetchCart();
+    } catch {
+      toast.error("Failed to remove item");
+    }
+  };
 
   useEffect(() => {
     if (!userLoading) {
       fetchCart();
     }
   }, [userLoading, fetchCart]);
-
-  const addToCart = async (gameId: string) => {
-    if (!user) {
-      toast.error("Please log in to add items to cart");
-      return;
-    }
-    try {
-      const existingItem = cartItems.find((item) => item.game_id === gameId);
-      if (existingItem) {
-        toast.info("Item already in cart");
-        return;
-      }
-      await prisma.cart.create({
-        data: {
-          user_id: user.id,
-          game_id: gameId,
-          quantity: 1,
-        },
-      });
-      toast.success("Item added to cart");
-      fetchCart();
-    } catch (error) {
-      console.error("Failed to add to cart", error);
-      toast.error("Failed to add item to cart");
-    }
-  };
-
-  const removeFromCart = async (cartId: string) => {
-    try {
-      await prisma.cart.delete({
-        where: { id: cartId },
-      });
-      toast.success("Item removed from cart");
-      fetchCart();
-    } catch (error) {
-      console.error("Failed to remove from cart", error);
-      toast.error("Failed to remove item from cart");
-    }
-  };
 
   const purchaseAll = async () => {
     if (!user || cartItems.length === 0) return;
@@ -157,10 +128,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const total = cartItems.reduce((sum, item) => {
-    const price = item.game.discount_price ?? item.game.price;
-    return sum + price;
-  }, 0);
+  const cartArray = Array.isArray(cartItems) ? cartItems : [];
+  const total = cartArray.reduce((acc, item) => acc + item.game.price, 0);
 
   return (
     <CartContext.Provider

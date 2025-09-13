@@ -116,6 +116,7 @@ export function GameDetails({ game }: GameDetailsProps) {
         {/* Hero Image */}
         <div className="relative aspect-video rounded-lg overflow-hidden">
           <Image
+            fill
             src={game.image_url || "/placeholder-game.jpg"}
             alt={game.title}
             className="w-full h-full object-cover"
@@ -134,6 +135,7 @@ export function GameDetails({ game }: GameDetailsProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {game.screenshots.map((screenshot, index) => (
                 <Image
+                fill
                   key={index}
                   src={screenshot}
                   alt={`${game.title} screenshot ${index + 1}`}
@@ -292,6 +294,7 @@ export function GameDetails({ game }: GameDetailsProps) {
               <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
                 {game.seller?.avatar_url ? (
                   <Image
+                  fill
                     src={game.seller.avatar_url}
                     alt={game.seller.username}
                     className="w-full h-full rounded-full object-cover"

@@ -1,19 +1,12 @@
 import { PrismaClient } from '@/lib/generated/prisma'
 
-// Extend the global type to include prisma
-declare global {
-  var prisma: PrismaClient | undefined
-}
-
 let prisma: PrismaClient
 
+// Verifica se já existe (somente em Node)
 if (process.env.NODE_ENV === 'production') {
   prisma = new PrismaClient()
 } else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient()
-  }
-  prisma = global.prisma
+  prisma = new PrismaClient()
 }
 
 export default prisma

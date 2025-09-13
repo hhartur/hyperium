@@ -76,6 +76,7 @@ export function GameGrid({ limit, category, searchQuery }: GameGridProps) {
         <Card key={game.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
           <div className="aspect-video relative overflow-hidden">
             <Image
+            fill
               src={game.image_url || '/placeholder-game.jpg'}
               alt={game.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

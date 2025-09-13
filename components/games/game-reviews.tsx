@@ -133,6 +133,7 @@ export function GameReviews({ gameId }: { gameId: string}) {
               <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
                 {review.user.avatar_url ? (
                   <Image
+                  fill
                     src={review.user.avatar_url}
                     alt={review.user.username}
                     className="w-full h-full rounded-full object-cover"
@@ -208,7 +209,7 @@ function ReviewForm({
         className="w-full p-2 border rounded-md resize-none mb-3"
         rows={3}
       />
-      <Button onClick={() => onSubmit(rating, comment)}>
+      <Button className="w-full" variant="outline" onClick={() => onSubmit(rating, comment)}>
         {existingReview ? "Update Review" : "Submit Review"}
       </Button>
     </div>

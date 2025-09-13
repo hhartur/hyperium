@@ -104,7 +104,7 @@ export function GameComments({ gameId }: GameCommentsProps) {
               placeholder="Share your thoughts about this game..."
               className="resize-none mb-3"
             />
-            <Button onClick={submitComment} disabled={!newComment.trim()}>
+            <Button className="w-full" variant="outline" onClick={submitComment} disabled={!newComment.trim()}>
               <Send className="w-4 h-4 mr-2" />
               Post Comment
             </Button>
@@ -122,6 +122,7 @@ export function GameComments({ gameId }: GameCommentsProps) {
                 <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
                   {comment.user.avatar_url ? (
                     <Image
+                    fill
                       src={comment.user.avatar_url}
                       alt={comment.user.username}
                       className="w-full h-full rounded-full object-cover"

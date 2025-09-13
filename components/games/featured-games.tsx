@@ -71,6 +71,7 @@ export function FeaturedGames() {
             <Card key={game.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-video relative overflow-hidden">
                 <Image
+                fill
                   src={game.image_url || '/placeholder-game.jpg'}
                   alt={game.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
