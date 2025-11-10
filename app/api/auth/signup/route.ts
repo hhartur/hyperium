@@ -12,9 +12,10 @@ export async function POST(req: Request) {
     const user = await createUser(email, username, password);
 
     return NextResponse.json(user);
-  } catch (error: any) {
-    if (error.message.includes('already exists') || error.message.includes('is already taken')) {
-      return new NextResponse(error.message, { status: 409 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    if (errorMessage.includes('already exists') || errorMessage.includes('is already taken')) {
+      return new NextResponse(errorMessage, { status: 409 });
     }
     console.error(error);
     return new NextResponse('Internal Server Error', { status: 500 });
