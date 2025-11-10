@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 
+const exchangeRateCache: { [key: string]: { rate: number; timestamp: number } } = {};
+const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const amount = searchParams.get('amount');
@@ -14,6 +17,15 @@ export async function GET(request: Request) {
     return NextResponse.json({ convertedAmount: parseFloat(amount), currency: from });
   }
 
+  const cacheKey = `${from}_${to.toUpperCase()}`;
+  const now = Date.now();
+
+  // Check cache first
+  if (exchangeRateCache[cacheKey] && (now - exchangeRateCache[cacheKey].timestamp) < CACHE_DURATION) {
+    const convertedAmount = parseFloat(amount) * exchangeRateCache[cacheKey].rate;
+    return NextResponse.json({ convertedAmount, currency: to.toUpperCase() });
+  }
+
   try {
     // Use exchangerate-api.com as a more reliable alternative
     const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
@@ -25,6 +37,10 @@ export async function GET(request: Request) {
     if (!rate) {
       throw new Error(`Exchange rate for ${to} not found`);
     }
+
+    // Cache the rate
+    exchangeRateCache[cacheKey] = { rate, timestamp: now };
+
     const convertedAmount = parseFloat(amount) * rate;
 
     return NextResponse.json({ convertedAmount, currency: to.toUpperCase() });

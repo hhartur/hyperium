@@ -215,7 +215,7 @@ function CommentItem({
   t,
 }: {
   comment: Comment;
-  user: any;
+  user: { id: string; is_admin?: boolean } | null;
   editingCommentId: string | null;
   editedCommentContent: string;
   onEdit: (commentId: string) => void;

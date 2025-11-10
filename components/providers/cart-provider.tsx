@@ -8,7 +8,6 @@ import React, {
   useCallback,
 } from "react";
 import { useAuthContext } from "./auth-provider";
-import prisma from "@/lib/prisma";
 import { toast } from "sonner";
 
 interface CartItem {

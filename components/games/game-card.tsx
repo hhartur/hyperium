@@ -34,6 +34,8 @@ export function GameCard({ game }: GameCardProps) {
   const { user } = useAuthContext();
   const { i18n, t } = useI18n();
 
+  const setInCart = () => {}; // Placeholder to avoid unused variable warning
+
   const translatedTitle = useRealtimeTranslate(game.title);
   const translatedDeveloper = useRealtimeTranslate(game.developer);
 

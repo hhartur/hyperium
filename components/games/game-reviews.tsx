@@ -157,7 +157,7 @@ function ReviewItem({
   t,
 }: {
   review: Review;
-  user: any;
+  user: { id: string; is_admin?: boolean } | null;
   userReview: Review | null;
   onEdit: (review: Review | null) => void;
   onDelete: (reviewId: string) => void;

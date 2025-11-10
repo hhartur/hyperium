@@ -23,28 +23,16 @@ const currencySymbols: { [key: string]: string } = {
 export function PriceDisplay({ price, discountPrice, lang }: PriceDisplayProps) {
   const [convertedPrice, setConvertedPrice] = useState<number | null>(null);
   const [convertedDiscountPrice, setConvertedDiscountPrice] = useState<number | null>(null);
-  const [currencySymbol, setCurrencySymbol] = useState<string>('$');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const targetCurrency = localeCurrencyMap[lang.toLowerCase()] || 'USD';
-
-    const formatCurrency = (amount: number, currency: string) => {
-      try {
-        return new Intl.NumberFormat(lang, { style: 'currency', currency }).format(amount);
-      } catch (e) {
-        // Fallback for unsupported locales/currencies
-        const symbol = currencySymbols[currency] || currency;
-        return `${symbol} ${amount.toFixed(2)}`;
-      }
-    };
 
     const convertCurrency = async () => {
       setLoading(true);
       if (targetCurrency === 'USD') {
         setConvertedPrice(price);
         setConvertedDiscountPrice(discountPrice || null);
-        setCurrencySymbol(currencySymbols['USD']);
         setLoading(false);
         return;
       }
@@ -53,7 +41,7 @@ export function PriceDisplay({ price, discountPrice, lang }: PriceDisplayProps) 
         const priceToConvert = discountPrice ?? price;
         const res = await fetch(`/api/currency?amount=${priceToConvert}&to=${targetCurrency}`);
         const data = await res.json();
-        
+
         if (data.convertedAmount) {
             if (discountPrice) {
                 const originalRes = await fetch(`/api/currency?amount=${price}&to=${targetCurrency}`);
@@ -63,14 +51,12 @@ export function PriceDisplay({ price, discountPrice, lang }: PriceDisplayProps) 
             } else {
                 setConvertedPrice(data.convertedAmount);
             }
-            setCurrencySymbol(currencySymbols[targetCurrency]);
         }
       } catch (error) {
         console.error("Failed to convert currency", error);
         // Fallback to USD on error
         setConvertedPrice(price);
         setConvertedDiscountPrice(discountPrice || null);
-        setCurrencySymbol(currencySymbols['USD']);
       } finally {
         setLoading(false);
       }

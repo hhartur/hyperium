@@ -35,7 +35,7 @@ export default function AccountSettings() {
         const errorData = await res.json()
         setError(errorData.error || 'Failed to update profile.')
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred.')
     } finally {
       setLoading(false)
