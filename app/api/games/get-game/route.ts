@@ -1,4 +1,3 @@
-// app/api/games/get-game/route.ts
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
@@ -15,6 +14,16 @@ export async function POST(req: Request) {
       where: { id, is_active: true },
       include: {
         seller: { select: { username: true, avatar_url: true } },
+        reviews: {
+          include: {
+            user: {
+              select: {
+                username: true,
+                avatar_url: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -22,10 +31,22 @@ export async function POST(req: Request) {
       return new NextResponse('Game not found', { status: 404 });
     }
 
+    const reviewCount = game.reviews.length;
+    const averageRating = reviewCount > 0 ? game.reviews.reduce((acc, review) => acc + review.rating, 0) / reviewCount : 0;
+
+    if (game.rating !== averageRating) {
+      await prisma.game.update({
+        where: { id },
+        data: { rating: averageRating },
+      });
+    }
+
     return NextResponse.json({
       ...game,
       price: game.price.toNumber(),
       discount_price: game.discount_price?.toNumber(),
+      rating: averageRating,
+      reviewCount: reviewCount,
     });
   } catch (error) {
     console.error('Failed to fetch game:', error);

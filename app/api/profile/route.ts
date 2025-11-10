@@ -1,41 +1,43 @@
-import { NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
-import { cookies } from 'next/headers';
-import prisma from '@/lib/prisma';
 
-export async function PUT(req: Request) {
-  const sessionToken = (await cookies()).get('session_token')?.value;
+import { NextResponse } from 'next/server'
+import { getSession } from '@/lib/auth'
+import prisma from '@/lib/prisma'
+import { cookies } from 'next/headers'
+
+export async function PATCH(req: Request) {
+  const cookieStore = cookies()
+  const sessionToken = (await cookieStore).get('session_token')?.value
 
   if (!sessionToken) {
-    return new NextResponse('Unauthorized', { status: 401 });
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  const user = await getSession(sessionToken);
+  const user = await getSession(sessionToken)
 
   if (!user) {
-    return new NextResponse('Unauthorized', { status: 401 });
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
+  const { username, avatar_url } = await req.json()
+
   try {
-    const body = await req.json();
-    const { avatar_url } = body;
-
-    if (!avatar_url) {
-      return new NextResponse('Missing required fields', { status: 400 });
-    }
-
     const updatedUser = await prisma.user.update({
-      where: {
-        id: user.id,
-      },
+      where: { id: user.id },
       data: {
+        username,
         avatar_url,
       },
-    });
+    })
 
-    return NextResponse.json(updatedUser);
+    // The session doesn't need to be updated manually, as the next
+    // request will fetch the updated user data from the database.
+
+    return NextResponse.json(updatedUser)
   } catch (error) {
-    console.error(error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    console.error('Error updating profile:', error)
+    return NextResponse.json(
+      { error: 'Failed to update profile' },
+      { status: 500 },
+    )
   }
 }

@@ -83,11 +83,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const removeFromCart = async (cartId: string) => {
+    if (!user) return;
     try {
       await fetch("/api/cart", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cart_id: cartId }),
+        body: JSON.stringify({ cart_id: cartId, userId: user.id }),
       });
       fetchCart();
     } catch {
@@ -112,16 +113,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         amount_paid: item.game.discount_price ?? item.game.price, // Actual amount paid
       }));
 
-      await prisma.purchase.createMany({
-        data: purchases,
+      const res = await fetch("/api/purchases", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ purchases }),
       });
 
-      await prisma.cart.deleteMany({
-        where: { user_id: user.id },
-      });
-
-      toast.success("Purchase completed successfully!");
-      setCartItems([]); // Limpa o carrinho
+      if (res.ok) {
+        toast.success("Purchase completed successfully!");
+        setCartItems([]); // Limpa o carrinho
+      } else {
+        toast.error("Failed to complete purchase");
+      }
     } catch (error) {
       console.error("Failed to complete purchase", error);
       toast.error("Failed to complete purchase");
@@ -129,7 +132,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const cartArray = Array.isArray(cartItems) ? cartItems : [];
-  const total = cartArray.reduce((acc, item) => acc + item.game.price, 0);
+  const total = cartArray.reduce((acc, item) => acc + (item.game.discount_price ?? item.game.price), 0);
 
   return (
     <CartContext.Provider

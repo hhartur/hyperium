@@ -1,0 +1,3 @@
+- [x] Add missing "view_details_button" key to pt-br/common.json
+- [x] Fix currency API 500 error (check frankfurter.app or use alternative)
+- [x] Optimize translations to use a single request instead of multiple for each text

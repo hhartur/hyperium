@@ -20,6 +20,9 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      orderBy: {
+        created_at: "desc",
+      },
     });
 
     const formatted = items.map(item => ({
@@ -50,5 +53,23 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Failed to add to cart" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const { cart_id, userId } = await req.json();
+
+  if (!cart_id || !userId) {
+    return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
+  }
+
+  try {
+    await prisma.cart.delete({
+      where: { id: cart_id, user_id: userId },
+    });
+    return NextResponse.json({ message: "Item removed from cart" });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Failed to remove item from cart" }, { status: 500 });
   }
 }

@@ -5,6 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -13,8 +20,11 @@ import {
 } from "@/components/ui/dialog";
 import { ShoppingCart, Star, Download, Flag, Play } from "lucide-react";
 import { useAuthContext } from "@/components/providers/auth-provider";
-import prisma from "@/lib/prisma";
-import Image from 'next/image'
+import { useCart } from "@/components/providers/cart-provider";
+import Image from 'next/image';
+import { useI18n } from "@/hooks/useI18n";
+import { PriceDisplay } from "./price-display";
+import { useRealtimeTranslate } from '@/hooks/useRealtimeTranslate';
 
 interface Game {
   id: string;
@@ -28,6 +38,7 @@ interface Game {
   release_date: Date;
   genre: string[];
   tags: string[];
+  rating: number;
   screenshots: string[];
   video_url?: string | null;
   file_url?: string | null;
@@ -39,6 +50,17 @@ interface Game {
     username: string;
     avatar_url?: string | null;
   } | null;
+  reviews: {
+    id: string;
+    rating: number;
+    comment: string | null;
+    created_at: Date;
+    user: {
+      username: string;
+      avatar_url?: string | null;
+    };
+  }[];
+  reviewCount: number;
 }
 
 interface GameDetailsProps {
@@ -46,38 +68,34 @@ interface GameDetailsProps {
 }
 
 export function GameDetails({ game }: GameDetailsProps) {
+  const { i18n, t } = useI18n();
+  const translatedDescription = useRealtimeTranslate(game.description);
+  const translatedTitle = useRealtimeTranslate(game.title);
+  const translatedDeveloper = useRealtimeTranslate(game.developer);
+  const translatedPublisher = useRealtimeTranslate(game.publisher);
   const [isPurchased, setIsPurchased] = useState(false);
   const [inCart, setInCart] = useState(false);
   const { user } = useAuthContext();
+  const { addToCart } = useCart();
 
-  const addToCart = async () => {
-    if (!user) return;
-
-    try {
-      await prisma.cart.create({
-        data: {
-          user_id: user.id,
-          game_id: game.id,
-          quantity: 1,
-        },
-      });
-      setInCart(true);
-    } catch (error) {
-      console.error("Error adding to cart:", error);
+  const getEmbedUrl = (url: string | null | undefined) => {
+    if (!url) return null;
+    const youtubeWatchRegex = /(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|embed\/|v\/|)([\w-]{11})(?:\S+)?/g;
+    const match = youtubeWatchRegex.exec(url);
+    if (match && match[1]) {
+      return `https://www.youtube.com/embed/${match[1]}`;
     }
+    return url; // Return original if not a recognized YouTube watch URL
   };
+
+  const embedVideoUrl = getEmbedUrl(game.video_url);
 
   const purchaseGame = async () => {
     if (!user) return;
 
     try {
-      await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: user.id, game_id: game.id }),
-      });
-
-      setIsPurchased(true);
+      // TODO: Implement purchase logic
+      console.log("Purchase logic not implemented yet");
     } catch (error) {
       console.error("Error purchasing game:", error);
     }
@@ -92,7 +110,7 @@ export function GameDetails({ game }: GameDetailsProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           reporter_id: user.id,
-          game_id: game.id, // ← mesmo nome do schema
+          game_id: game.id,
           reason,
           description,
         }),
@@ -120,43 +138,52 @@ export function GameDetails({ game }: GameDetailsProps) {
             src={game.image_url || "/placeholder-game.jpg"}
             alt={game.title}
             className="w-full h-full object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           <div className="absolute bottom-4 left-4 text-white">
-            <h1 className="text-3xl font-bold mb-2">{game.title}</h1>
-            <p className="text-lg opacity-90">by {game.developer}</p>
+            <h1 className="text-3xl font-bold mb-2">{translatedTitle}</h1>
+            <p className="text-lg opacity-90">by {translatedDeveloper}</p>
           </div>
         </div>
 
         {/* Screenshots */}
         {game.screenshots && game.screenshots.length > 0 && (
           <div>
-            <h3 className="text-xl font-semibold mb-4">Screenshots</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {game.screenshots.map((screenshot, index) => (
-                <Image
-                fill
-                  key={index}
-                  src={screenshot}
-                  alt={`${game.title} screenshot ${index + 1}`}
-                  className="rounded-lg aspect-video object-cover"
-                />
-              ))}
-            </div>
+            <h3 className="text-xl font-semibold mb-4">{t('screenshots')}</h3>
+            <Carousel className="w-full">
+              <CarouselContent>
+                {game.screenshots.map((screenshot, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="relative aspect-video rounded-lg overflow-hidden">
+                      <Image
+                        fill
+                        src={screenshot}
+                        alt={`${translatedTitle} screenshot ${index + 1}`}
+                        className="rounded-lg aspect-video object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
           </div>
         )}
 
         {/* Description */}
         <div>
-          <h3 className="text-xl font-semibold mb-4">About This Game</h3>
+          <h3 className="text-xl font-semibold mb-4">{t('about_this_game')}</h3>
           <p className="text-muted-foreground leading-relaxed">
-            {game.description}
+            {translatedDescription}
           </p>
         </div>
 
         {/* Tags */}
         <div>
-          <h3 className="text-xl font-semibold mb-4">Tags</h3>
+          <h3 className="text-xl font-semibold mb-4">{t('tags')}</h3>
           <div className="flex flex-wrap gap-2">
             {game.tags.map((tag) => (
               <Badge key={tag} variant="secondary">
@@ -175,30 +202,19 @@ export function GameDetails({ game }: GameDetailsProps) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span className="font-medium">4.5</span>
+                <span className="font-medium">{game.rating.toFixed(1)}</span>
                 <span className="text-sm text-muted-foreground">
-                  (123 reviews)
+                  ({game.reviewCount} {t('reviews')})
                 </span>
               </div>
             </div>
 
-            <div className="mb-6">
-              {game.discount_price ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-primary-600">
-                    ${game.discount_price.toFixed(2)}
-                  </span>
-                  <span className="text-lg text-muted-foreground line-through">
-                    ${game.price.toFixed(2)}
-                  </span>
-                  <Badge className="bg-red-600 text-white">
+            <div className="mb-6 flex items-center gap-2">
+              <PriceDisplay price={game.price} discountPrice={game.discount_price} lang={i18n.language} />
+              {game.discount_price && (
+                 <Badge className="bg-red-600 text-white">
                     -{Math.round((1 - game.discount_price / game.price) * 100)}%
                   </Badge>
-                </div>
-              ) : (
-                <span className="text-2xl font-bold">
-                  ${game.price.toFixed(2)}
-                </span>
               )}
             </div>
 
@@ -206,12 +222,12 @@ export function GameDetails({ game }: GameDetailsProps) {
               {isPurchased ? (
                 <Button className="w-full" size="lg">
                   <Download className="w-4 h-4 mr-2" />
-                  Download Game
+                  {t('download_game')}
                 </Button>
               ) : inCart ? (
                 <Button className="w-full" size="lg" variant="outline">
                   <ShoppingCart className="w-4 h-4 mr-2" />
-                  In Cart
+                  {t('in_cart')}
                 </Button>
               ) : (
                 <>
@@ -222,43 +238,61 @@ export function GameDetails({ game }: GameDetailsProps) {
                     disabled={!user}
                     variant="outline"
                   >
-                    Purchase Now
+                    {t('purchase_now')}
                   </Button>
                   <Button
-                    onClick={addToCart}
+                    onClick={() => addToCart(game.id)}
                     variant="outline"
                     className="w-full"
                     size="lg"
                     disabled={!user}
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
-                    Add to Cart
+                    {t('add_to_cart')}
                   </Button>
                 </>
               )}
 
               {game.video_url && (
-                <Button variant="ghost" className="w-full" size="lg">
-                  <Play className="w-4 h-4 mr-2" />
-                  Watch Trailer
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" className="w-full" size="lg">
+                      <Play className="w-4 h-4 mr-2" />
+                      {t('watch_trailer')}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-3xl">
+                    <DialogHeader>
+                      <DialogTitle>{game.title} - Trailer</DialogTitle>
+                    </DialogHeader>
+                    <div className="aspect-video">
+                      <iframe
+                        className="w-full h-full"
+                        src={embedVideoUrl || ''}
+                        title={`${game.title} trailer`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               )}
             </div>
 
             <div className="mt-6 pt-6 border-t">
               <div className="text-sm text-muted-foreground space-y-1">
                 <p>
-                  <strong>Developer:</strong> {game.developer}
+                  <strong>{t('developer')}:</strong> {translatedDeveloper}
                 </p>
                 <p>
-                  <strong>Publisher:</strong> {game.publisher}
+                  <strong>{t('publisher')}:</strong> {translatedPublisher}
                 </p>
                 <p>
-                  <strong>Release Date:</strong>{" "}
+                  <strong>{t('release_date')}:</strong>{" "}
                   {new Date(game.release_date).toLocaleDateString()}
                 </p>
                 <p>
-                  <strong>Genres:</strong> {game.genre.join(", ")}
+                  <strong>{t('genres')}:</strong> {game.genre.join(", ")}
                 </p>
               </div>
             </div>
@@ -272,14 +306,14 @@ export function GameDetails({ game }: GameDetailsProps) {
                     className="text-muted-foreground"
                   >
                     <Flag className="w-4 h-4 mr-2" />
-                    Report
+                    {t('report')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Report Game</DialogTitle>
+                      <DialogTitle>{t('report_game')}</DialogTitle>
                   </DialogHeader>
-                  <ReportForm onSubmit={reportGame} />
+                  <ReportForm onSubmit={reportGame} t={t} />
                 </DialogContent>
               </Dialog>
             </div>
@@ -289,15 +323,16 @@ export function GameDetails({ game }: GameDetailsProps) {
         {/* Seller Info */}
         <Card>
           <CardContent className="p-6">
-            <h3 className="font-semibold mb-4">Sold by</h3>
+            <h3 className="font-semibold mb-4">{t('sold_by')}</h3>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center relative overflow-hidden">
                 {game.seller?.avatar_url ? (
                   <Image
-                  fill
+                    fill
                     src={game.seller.avatar_url}
                     alt={game.seller.username}
                     className="w-full h-full rounded-full object-cover"
+                    sizes="40px"
                   />
                 ) : (
                   <span className="font-medium">
@@ -308,7 +343,7 @@ export function GameDetails({ game }: GameDetailsProps) {
               <div>
                 <p className="font-medium">{game.seller?.username}</p>
                 <p className="text-sm text-muted-foreground">
-                  Independent Developer
+                  {t('independent_developer')}
                 </p>
               </div>
             </div>
@@ -321,8 +356,10 @@ export function GameDetails({ game }: GameDetailsProps) {
 
 function ReportForm({
   onSubmit,
+  t,
 }: {
   onSubmit: (reason: string, description?: string) => void;
+  t: (key: string) => string;
 }) {
   const [reason, setReason] = useState("");
   const [description, setDescription] = useState("");
@@ -338,13 +375,13 @@ function ReportForm({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-2">Reason</label>
+        <label className="block text-sm font-medium mb-2">{t('reason')}</label>
         <select
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           className="w-full p-2 border rounded-md"
         >
-          <option value="">Select a reason</option>
+          <option value="">{t('select_reason')}</option>
           {reasons.map((r) => (
             <option key={r} value={r}>
               {r}
@@ -354,18 +391,18 @@ function ReportForm({
       </div>
       <div>
         <label className="block text-sm font-medium mb-2">
-          Description (optional)
+          {t('description_optional')}
         </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full p-2 border rounded-md resize-none"
           rows={3}
-          placeholder="Provide more details..."
+          placeholder={t('provide_more_details')}
         />
       </div>
       <Button onClick={() => onSubmit(reason, description)} disabled={!reason}>
-        Submit Report
+        {t('submit_report')}
       </Button>
     </div>
   );

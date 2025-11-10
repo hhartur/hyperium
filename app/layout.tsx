@@ -5,6 +5,7 @@ import { AuthProvider } from "@/components/providers/auth-provider";
 import { Header } from "@/components/layout/header";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/components/providers/cart-provider";
+import '@/i18n-client'; // Import i18n configuration
 
 export const metadata: Metadata = {
   title: "Hyperium - Game Store",
@@ -13,11 +14,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  params: { lang },
 }: {
   children: React.ReactNode;
+  params: { lang: string };
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <body>
         <ThemeProvider
           attribute="class"

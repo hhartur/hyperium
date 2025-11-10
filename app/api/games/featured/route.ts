@@ -7,17 +7,31 @@ export async function GET() {
       where: {
         is_active: true,
       },
+      include: {
+        reviews: {
+          select: {
+            rating: true,
+          },
+        },
+      },
       orderBy: {
         created_at: 'desc',
       },
       take: 4,
     });
 
-    const formattedGames = games.map(game => ({
-      ...game,
-      price: game.price.toNumber(), // Convert Decimal to number
-      discount_price: game.discount_price?.toNumber(), // Convert Decimal to number
-    }));
+    const formattedGames = games.map(game => {
+      const totalRating = game.reviews.reduce((acc, review) => acc + review.rating, 0);
+      const avgRating = game.reviews.length > 0 ? totalRating / game.reviews.length : 0;
+
+      return {
+        ...game,
+        price: game.price.toNumber(), // Convert Decimal to number
+        discount_price: game.discount_price?.toNumber(), // Convert Decimal to number
+        avgRating: avgRating,
+        reviews: undefined, // remove reviews from the final object
+      };
+    });
 
     return NextResponse.json(formattedGames);
   } catch (error) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -59,7 +60,6 @@ export function UserTable() {
         throw new Error("Failed to update admin status");
       }
 
-      // Update local state
       setUsers(
         users.map((user) =>
           user.id === userId ? { ...user, is_admin: !currentStatus } : user
@@ -88,7 +88,6 @@ export function UserTable() {
         throw new Error("Failed to update user details");
       }
 
-      // Update local state
       setUsers(
         users.map((user) =>
           user.id === userId
@@ -153,11 +152,25 @@ export function UserTable() {
               className="flex items-center justify-between p-4 border rounded-lg"
             >
               <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                  <span className="text-primary-600 font-semibold">
-                    {user.username.charAt(0).toUpperCase()}
-                  </span>
-                </div>
+                {/* Avatar */}
+                {user.avatar_url ? (
+                  <div className="relative w-10 h-10">
+                    <Image
+                      src={user.avatar_url}
+                      alt={user.username}
+                      fill
+                      className="object-cover rounded-full"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                    <span className="text-primary-600 font-semibold">
+                      {user.username.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+
+                {/* User info */}
                 <div>
                   {editingUser === user.id ? (
                     <div className="space-y-2">
@@ -191,16 +204,15 @@ export function UserTable() {
                   )}
                 </div>
               </div>
+
+              {/* Actions */}
               <div className="flex items-center space-x-2">
                 <Badge variant={user.is_admin ? "default" : "secondary"}>
                   {user.is_admin ? "Admin" : "User"}
                 </Badge>
                 {editingUser === user.id ? (
                   <div className="flex space-x-2">
-                    <Button
-                      size="sm"
-                      onClick={() => updateUserDetails(user.id)}
-                    >
+                    <Button size="sm" onClick={() => updateUserDetails(user.id)}>
                       Save
                     </Button>
                     <Button

@@ -18,6 +18,7 @@ interface Game {
   release_date: Date;
   genre: string[];
   tags: string[];
+  rating: number;
   screenshots: string[];
   video_url?: string | null;
   file_url?: string | null;
@@ -29,6 +30,17 @@ interface Game {
     username: string;
     avatar_url?: string | null;
   } | null;
+  reviews: {
+    id: string;
+    rating: number;
+    comment: string | null;
+    created_at: Date;
+    user: {
+      username: string;
+      avatar_url?: string | null;
+    };
+  }[];
+  reviewCount: number;
 }
 
 export default function GamePage() {

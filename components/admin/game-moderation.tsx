@@ -126,29 +126,30 @@ export function GameModeration() {
               className="flex items-center justify-between p-4 border rounded-lg"
             >
               <div className="flex items-center space-x-4">
-                <Image
-                fill
-                  src={game.image_url}
-                  alt={game.title}
-                  className="w-16 h-16 object-cover rounded-lg"
-                />
-                <div>
-                  <p className="font-medium">{game.title}</p>
-                  <p className="text-sm text-muted-foreground">
-                    by {game.developer}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Added {new Date(game.created_at).toLocaleDateString()}
-                  </p>
-                  <div className="flex gap-1 mt-1">
-                    {game.genre.slice(0, 2).map((g) => (
-                      <Badge key={g} variant="secondary" className="text-xs">
-                        {g}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
+  <Image
+    src={game.image_url}
+    alt={game.title}
+    width={64} // 16 * 4 = 64px
+    height={64}
+    className="object-cover rounded-lg"
+  />
+  <div>
+    <p className="font-medium">{game.title}</p>
+    <p className="text-sm text-muted-foreground">
+      by {game.developer}
+    </p>
+    <p className="text-xs text-muted-foreground">
+      Added {new Date(game.created_at).toLocaleDateString()}
+    </p>
+    <div className="flex gap-1 mt-1">
+      {game.genre.slice(0, 2).map((g) => (
+        <Badge key={g} variant="secondary" className="text-xs">
+          {g}
+        </Badge>
+      ))}
+    </div>
+  </div>
+</div>
               <div className="flex items-center space-x-2">
                 <Badge variant={game.is_active ? "default" : "destructive"}>
                   {game.is_active ? "Active" : "Inactive"}

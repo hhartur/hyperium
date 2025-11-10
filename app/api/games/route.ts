@@ -24,9 +24,23 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, description, price, genre, developer, publisher, image_url } = body;
+    const { 
+      title, 
+      description, 
+      price, 
+      discount_price,
+      genre, 
+      tags,
+      developer, 
+      publisher, 
+      release_date,
+      image_url,
+      screenshots,
+      video_url,
+      file_url
+    } = body;
 
-    if (!title || !description || !price || !genre || !developer || !publisher || !image_url) {
+    if (!title || !description || !price || !genre || !developer || !publisher || !release_date || !image_url) {
       return new NextResponse('Missing required fields', { status: 400 });
     }
 
@@ -36,11 +50,16 @@ export async function POST(req: Request) {
         title,
         description,
         price,
-        release_date: new Date(),
+        discount_price,
+        release_date: new Date(release_date),
         genre,
+        tags,
         developer,
         publisher,
         image_url,
+        screenshots,
+        video_url,
+        file_url,
         user_id: user.id,
       },
     });
@@ -60,7 +79,7 @@ export async function GET(req: Request) {
     const category = searchParams.get('category');
     const searchQuery = searchParams.get('searchQuery');
 
-    const where: GameWhereInput = { is_active: true };
+    const where: GameWhereInput = {};
 
     if (category) {
       where.genre = { has: category };
@@ -72,13 +91,33 @@ export async function GET(req: Request) {
 
     const games = await prisma.game.findMany({
       where,
+      include: {
+        reviews: {
+          select: {
+            rating: true,
+          },
+        },
+      },
       orderBy: {
         created_at: 'desc',
       },
       take: limit ? parseInt(limit, 10) : undefined,
     });
 
-    return NextResponse.json(games);
+    const formattedGames = games.map(game => {
+      const reviewCount = game.reviews.length;
+      const averageRating = reviewCount > 0 ? game.reviews.reduce((acc, review) => acc + review.rating, 0) / reviewCount : 0;
+
+      return {
+        ...game,
+        price: game.price.toNumber(),
+        discount_price: game.discount_price?.toNumber(),
+        rating: averageRating,
+        reviewCount: reviewCount,
+      };
+    });
+
+    return NextResponse.json(formattedGames);
   } catch (error) {
     console.error(error);
     return new NextResponse('Internal Server Error', { status: 500 });

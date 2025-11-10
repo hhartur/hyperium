@@ -43,6 +43,24 @@ async function sendVerificationEmail(email: string, token: string) {
 }
 
 export async function createUser(email: string, username: string, password: string) {
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { email },
+        { username },
+      ],
+    },
+  });
+
+  if (existingUser) {
+    if (existingUser.email === email) {
+      throw new Error('User with this email already exists');
+    }
+    if (existingUser.username === username) {
+      throw new Error('Username is already taken');
+    }
+  }
+
   const passwordHash = await hashPassword(password);
   const verificationToken = crypto.randomBytes(32).toString('hex');
 

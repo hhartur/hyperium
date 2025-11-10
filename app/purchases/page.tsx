@@ -126,12 +126,14 @@ export default function PurchasesPage() {
             <Card key={purchase.id}>
               <CardContent className="p-4">
                 <div className="flex gap-4">
-                  <Image
-                  fill
-                    src={purchase.games.image_url || '/placeholder-game.jpg'}
-                    alt={purchase.games.title}
-                    className="w-20 h-20 object-cover rounded"
-                  />
+                  <div className="relative w-20 h-20">
+                    <Image
+                      fill
+                      src={purchase.games.image_url || '/placeholder-game.jpg'}
+                      alt={purchase.games.title}
+                      className="object-cover rounded"
+                    />
+                  </div>
                   <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <div>

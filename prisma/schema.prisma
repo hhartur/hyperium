@@ -11,7 +11,7 @@ datasource db {
 model User {
   id                       String    @id @default(uuid()) @map("id") @db.Uuid
   email                    String    @unique
-  username                 String
+  username                 String    @unique
   password_hash            String
   email_verified           Boolean   @default(false)
   email_verification_token String?   @map("email_verification_token") @unique
@@ -24,6 +24,7 @@ model User {
   games                    Game[]    @relation("UserGames")
   reports                  Report[]  @relation("UserReports")
   purchases                Purchase[] @relation("UserPurchases")
+  messages                 Message[] @relation("UserMessages")
 
   reviews Review[]
   carts Cart[]
@@ -58,6 +59,7 @@ model Game {
   image_url      String
   screenshots    String[]  @default([]) @db.Text
   video_url      String?
+  rating         Float     @default(0)
   file_url       String?
   is_active      Boolean   @default(true)
   created_at     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -94,13 +96,29 @@ model Purchase {
   user_id    String   @db.Uuid
   game_id    String   @db.Uuid
   price      Decimal  @db.Decimal(10, 2)
-  amount_paid Decimal  @db.Decimal(10, 2) // <-- adiciona aqui
+  amount_paid Decimal  @db.Decimal(10, 2)
   created_at DateTime @default(now()) @db.Timestamptz(6)
+  chat_status         String?   @default("OPEN")
+  chat_closed_reason  String?
 
   user User @relation("UserPurchases", fields: [user_id], references: [id])
   game Game @relation("GamePurchases", fields: [game_id], references: [id])
+  messages Message[]
 
   @@map("purchases")
+}
+
+model Message {
+  id         String   @id @default(uuid()) @db.Uuid
+  purchase_id String   @db.Uuid
+  sender_id  String   @db.Uuid
+  content    String
+  timestamp  DateTime @default(now()) @db.Timestamptz(6)
+
+  purchase Purchase @relation(fields: [purchase_id], references: [id])
+  sender   User     @relation("UserMessages", fields: [sender_id], references: [id])
+
+  @@map("messages")
 }
 
 model Comment {
@@ -121,7 +139,7 @@ model Cart {
   user_id String   @db.Uuid
   game_id String   @db.Uuid
   created_at DateTime @default(now()) @db.Timestamptz(6)
-  quantity  Int      @default(1)       // <--- adiciona este campo
+  quantity  Int      @default(1)
 
   user User @relation(fields: [user_id], references: [id])
   game Game @relation(fields: [game_id], references: [id])
