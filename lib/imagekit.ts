@@ -1,4 +1,4 @@
-import ImageKit from "imagekit-javascript";
+import ImageKit from "imagekit";
 
 export const imagekit = new ImageKit({
   publicKey: "YOUR_PUBLIC_KEY",
