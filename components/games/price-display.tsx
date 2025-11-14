@@ -14,11 +14,11 @@ const localeCurrencyMap: { [key: string]: string } = {
   'es': 'EUR',
 };
 
-const currencySymbols: { [key: string]: string } = {
+/*const currencySymbols: { [key: string]: string } = {
   'USD': '$',
   'BRL': 'R$',
   'EUR': '€',
-};
+};*/
 
 export function PriceDisplay({ price, discountPrice, lang }: PriceDisplayProps) {
   const [convertedPrice, setConvertedPrice] = useState<number | null>(null);

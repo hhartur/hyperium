@@ -26,7 +26,7 @@ interface Game {
 export function FeaturedGames() {
   const [games, setGames] = useState<Game[]>([])
   const [loading, setLoading] = useState(true)
-  const { t, i18n } = useI18n();
+  const { t } = useI18n();
 
   useEffect(() => {
     async function fetchFeaturedGames() {

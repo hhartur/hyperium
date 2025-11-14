@@ -34,12 +34,12 @@ export function GameCard({ game }: GameCardProps) {
   const { user } = useAuthContext();
   const { i18n, t } = useI18n();
 
-  const setInCart = () => {}; // Placeholder to avoid unused variable warning
+  //const setInCart = () => {}; // Placeholder to avoid unused variable warning
 
   const translatedTitle = useRealtimeTranslate(game.title);
   const translatedDeveloper = useRealtimeTranslate(game.developer);
 
-  return (
+    return (
     <Card key={game.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
       <div className="aspect-video relative overflow-hidden">
         <Link href={`/games/${game.id}`}>

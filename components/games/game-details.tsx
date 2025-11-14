@@ -73,8 +73,8 @@ export function GameDetails({ game }: GameDetailsProps) {
   const translatedTitle = useRealtimeTranslate(game.title);
   const translatedDeveloper = useRealtimeTranslate(game.developer);
   const translatedPublisher = useRealtimeTranslate(game.publisher);
-  const [isPurchased, setIsPurchased] = useState(false);
-  const [inCart, setInCart] = useState(false);
+  const [isPurchased] = useState(false);
+  const [inCart] = useState(false);
   const { user } = useAuthContext();
   const { addToCart } = useCart();
 

@@ -5,7 +5,7 @@ import { getSession } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
 // GET: Fetch all games from the seller
-export async function GET(req: NextRequest) {
+export async function GET() {
   const sessionToken = (await cookies()).get('session_token')?.value;
 
   if (!sessionToken) {

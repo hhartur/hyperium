@@ -60,7 +60,7 @@ function CartItem({ item }: { item: CartItem }) {
 
 export default function CartPage() {
   const { user } = useAuthContext()
-  const { cartItems, loading, removeFromCart, purchaseAll, total } = useCart()
+  const { cartItems, loading, purchaseAll, total } = useCart()
   const router = useRouter()
   const { t, i18n } = useI18n();
 
