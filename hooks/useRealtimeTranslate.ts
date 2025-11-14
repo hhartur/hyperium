@@ -107,3 +107,46 @@ export function useRealtimeTranslate(text: string) {
 
   return translatedText;
 }
+
+export function useRealtimeTranslateMultiple(texts: string[]) {
+  const { i18n } = useI18n();
+  const [translatedTexts, setTranslatedTexts] = useState(texts);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    const targetLang = i18n.language.split('-')[0]; // Use base language (e.g., 'pt' from 'pt-BR')
+
+    if (!texts.length || targetLang === 'en') {
+      setTranslatedTexts(texts);
+      return;
+    }
+
+    const promises = texts.map(text => {
+      if (!text) return Promise.resolve(text);
+
+      const cacheKey = `${targetLang}:${text}`;
+      if (translationCache.has(cacheKey)) {
+        return Promise.resolve(translationCache.get(cacheKey)!);
+      }
+
+      return new Promise<string>((resolve, reject) => {
+        translationQueue.push({ text, targetLang, resolve, reject });
+      });
+    });
+
+    Promise.all(promises).then(translated => {
+      setTranslatedTexts(translated);
+    }).catch(() => {
+      setTranslatedTexts(texts); // Fallback
+    });
+
+    // Debounce queue processing
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      processTranslationQueue();
+    }, 100); // Process after 100ms of inactivity
+
+  }, [texts, i18n.language]);
+
+  return translatedTexts;
+}
