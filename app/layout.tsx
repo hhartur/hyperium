@@ -12,17 +12,10 @@ export const metadata: Metadata = {
   description: "The best place to buy and sell indie games",
 };
 
-// If this layout is inside [lang]/layout.tsx, params will be available
-interface RootLayoutProps {
-  children: React.ReactNode;
-  params?: { lang?: string }; // optional for safety
-}
-
-export default function RootLayout({ children, params }: RootLayoutProps) {
-  const lang = params?.lang ?? "en"; // fallback to 'en' if missing
-
+// Root layout does NOT receive `params`
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={lang} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider
           attribute="class"
