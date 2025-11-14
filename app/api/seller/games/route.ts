@@ -4,7 +4,8 @@ import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
- NextRequest) {
+// GET: Fetch all games from the seller
+export async function GET(req: NextRequest) {
   const sessionToken = (await cookies()).get('session_token')?.value;
 
   if (!sessionToken) {
@@ -40,6 +41,7 @@ import { cookies } from 'next/headers';
   }
 }
 
+// POST: Create a new game
 export async function POST(req: NextRequest) {
   const sessionToken = (await cookies()).get('session_token')?.value;
 
@@ -56,19 +58,9 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
-      title,
-      description,
-      price,
-      discount_price,
-      genre,
-      tags,
-      developer,
-      publisher,
-      release_date,
-      image_url,
-      screenshots,
-      video_url,
-      file_url,
+      title, description, price, discount_price, genre, tags,
+      developer, publisher, release_date, image_url,
+      screenshots, video_url, file_url,
     } = body;
 
     if (!title || !description || !price || !genre || !developer || !publisher || !release_date || !image_url) {
@@ -91,7 +83,7 @@ export async function POST(req: NextRequest) {
         screenshots,
         video_url,
         file_url,
-        user_id: user.id, // Assuming user_id is also seller_id for simplicity
+        user_id: user.id,
       },
     });
 
@@ -102,6 +94,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// PUT: Update a game
 export async function PUT(req: NextRequest) {
   const sessionToken = (await cookies()).get('session_token')?.value;
 
@@ -146,6 +139,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
+// DELETE: Delete a game
 export async function DELETE(req: NextRequest) {
   const sessionToken = (await cookies()).get('session_token')?.value;
 
