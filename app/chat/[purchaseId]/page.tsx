@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Send, XCircle, Languages } from 'lucide-react';
+import { MessageCircle, Send, XCircle } from 'lucide-react';
 import { useAuthContext } from '@/components/providers/auth-provider';
 import Image from 'next/image';
 import {

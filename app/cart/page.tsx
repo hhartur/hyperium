@@ -14,7 +14,6 @@ import { PriceDisplay } from '@/components/games/price-display';
 import Image from 'next/image';
 
 function CartItem({ item }) {
-  const { removeFromCart } = useCart();
   const { i18n } = useI18n();
   const translatedTitle = useRealtimeTranslate(item.game.title);
   const translatedDeveloper = useRealtimeTranslate(item.game.developer);
