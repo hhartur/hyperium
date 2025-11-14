@@ -106,7 +106,7 @@ export default function AddGamePage() {
         imageUrl = uploadRes.url;
       }
 
-      const { image_file: _unusedImageFile, ...rest } = data;
+      const { image_file: _, ...rest } = data;
 
       const response = await fetch("/api/games", {
         method: "POST",

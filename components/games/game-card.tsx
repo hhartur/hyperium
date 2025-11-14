@@ -12,7 +12,7 @@ import { useI18n } from '@/hooks/useI18n';
 import { useRealtimeTranslate } from '@/hooks/useRealtimeTranslate';
 import { PriceDisplay } from './price-display';
 
-interface Game {
+export interface Game {
   id: string;
   title: string;
   description: string;
