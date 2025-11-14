@@ -5,20 +5,22 @@ import { AuthProvider } from "@/components/providers/auth-provider";
 import { Header } from "@/components/layout/header";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/components/providers/cart-provider";
-import '@/i18n-client'; // Import i18n configuration
+import "@/i18n-client"; // Import i18n configuration
 
 export const metadata: Metadata = {
   title: "Hyperium - Game Store",
   description: "The best place to buy and sell indie games",
 };
 
-export default function RootLayout({
-  children,
-  params: { lang },
-}: {
+// If this layout is inside [lang]/layout.tsx, params will be available
+interface RootLayoutProps {
   children: React.ReactNode;
-  params: { lang: string };
-}) {
+  params?: { lang?: string }; // optional for safety
+}
+
+export default function RootLayout({ children, params }: RootLayoutProps) {
+  const lang = params?.lang ?? "en"; // fallback to 'en' if missing
+
   return (
     <html lang={lang} suppressHydrationWarning>
       <body>
