@@ -95,7 +95,9 @@ export function useRealtimeTranslate(text: string) {
     });
 
     // Debounce queue processing
-    clearTimeout(timeoutRef.current);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
     timeoutRef.current = setTimeout(() => {
       processTranslationQueue();
     }, 100); // Process after 100ms of inactivity
