@@ -10,7 +10,7 @@ import React, {
 import { useAuthContext } from "./auth-provider";
 import { toast } from "sonner";
 
-interface CartItem {
+export interface CartItem {
   id: string;
   game_id: string;
   user_id: string;

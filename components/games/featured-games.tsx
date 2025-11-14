@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+/*import { Button } from '@/components/ui/button'
 import { Badge } from '../ui/badge'
 import { Star, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useI18n } from '@/hooks/useI18n';
 import { useRealtimeTranslate } from '@/hooks/useRealtimeTranslate';
-import { PriceDisplay } from './price-display';
+import { PriceDisplay } from './price-display';*/
 import { FeaturedGameCard } from './featured-game-card';
+import { useI18n } from '@/hooks/useI18n';
 
 interface Game {
   id: string;

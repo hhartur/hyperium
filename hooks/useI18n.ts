@@ -17,5 +17,11 @@ export function useI18n() {
     }
   }, [i18n]);
 
-  return { t: isInitialized ? t : (key: string) => key, i18n, isInitialized };
+  const safeT = (key: string, options?: any) => {
+    if (!isInitialized) return key;
+    const result = t(key, options);
+    return typeof result === 'string' ? result : key;
+  };
+
+  return { t: safeT, i18n, isInitialized };
 }

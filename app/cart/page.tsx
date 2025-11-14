@@ -8,13 +8,15 @@ import { Badge } from '@/components/ui/badge'
 import { Trash2, ShoppingCart } from 'lucide-react'
 import { useAuthContext } from '@/components/providers/auth-provider'
 import { useCart } from '@/components/providers/cart-provider'
+import type { CartItem } from '@/components/providers/cart-provider'
 import { useI18n } from '@/hooks/useI18n';
 import { useRealtimeTranslate } from '@/hooks/useRealtimeTranslate';
 import { PriceDisplay } from '@/components/games/price-display';
 import Image from 'next/image';
 
-function CartItem({ item }) {
+function CartItem({ item }: { item: CartItem }) {
   const { i18n } = useI18n();
+  const { removeFromCart } = useCart();
   const translatedTitle = useRealtimeTranslate(item.game.title);
   const translatedDeveloper = useRealtimeTranslate(item.game.developer);
 
