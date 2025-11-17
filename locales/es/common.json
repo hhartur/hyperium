@@ -177,5 +177,11 @@
   "image_required": "Se requiere una URL de imagen o un archivo de imagen",
   "all_games": "Todos los Juegos",
   "discover_games": "Descubre juegos indie increíbles de desarrolladores talentosos",
-  "add_your_game": "Añade Tu Juego"
+  "add_your_game": "Añade Tu Juego",
+  "write_a_review": "Escribir una reseña",
+  "share_thoughts_placeholder": "Comparte tus pensamientos sobre este juego...",
+  "update_your_review": "Actualizar tu reseña",
+  "about_this_game": "Acerca de Este Juego",
+  "genres": "Géneros",
+  "report": "Reportar"
 }

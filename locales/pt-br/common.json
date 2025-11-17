@@ -48,7 +48,7 @@
   "cancel": "Cancelar",
   "reviews": "Avaliações",
   "write_review": "Escrever uma avaliação",
-  "update_review": "Atualizar sua avaliação",
+  "update_your_review": "Atualizar sua avaliação",
   "submit_review": "Enviar Avaliação",
   "update_review_button": "Atualizar Avaliação",
   "share_thoughts_review": "Compartilhe seus pensamentos sobre este jogo...",
@@ -178,5 +178,10 @@
   "all_games": "Todos os Jogos",
   "discover_games": "Descubra jogos indie incríveis de desenvolvedores talentosos",
   "add_your_game": "Adicione Seu Jogo",
-  "view_details_button": "Ver Detalhes"
+  "write_a_review": "Escrever uma avaliação",
+  "share_thoughts_placeholder": "Compartilhe seus pensamentos sobre este jogo...",
+  "update_your_review": "Atualizar sua avaliação",
+  "about_this_game": "Sobre Este Jogo",
+  "genres": "Gêneros",
+  "report": "Reportar"
 }
